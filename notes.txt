@@ -1,0 +1,61 @@
+user chooses class i.e. 
+	heavy and slow
+	light but fast
+	normal
+	
+walls
+	bounce
+	solid
+	wrap
+	
+store
+	weapons
+		projectile
+			missles, circleSeekers, targeted
+		laser (player centered or grenade)
+			max range
+			single target for duration
+			single target in range
+			any target in range
+			random targets in range		
+		explosive
+			timed
+			triggered
+			proximity
+			directional
+		
+	shields
+		weapon immune
+			doesnt protect from rations/effects		
+		deflector
+			player colide doesnt affect player w/ shield
+		solid
+			player coliding w/ shield stops completely
+		damaging 
+			player coliding w/ shield takes a little damage
+			
+	rations (make dropable)
+		nitro / molassas (speed)
+		revitalize / poison (timed health effect)
+		
+		med pack
+		antidote
+		
+		
+random pos/neg rations that have immediate effect
+
+able to map buttons to items purchased
+
+mouseover displays object info
+
+team play
+
+match info panel
+	players in match
+	
+
+gather players for game
+	players can "host" games, set rules
+	players can drop out of games
+	players can join games in progress?
+		not sure how that would work

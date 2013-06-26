@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>CircleWars</title>
+<style>
+body{
+	padding:0px; margin:0px;
+}
+</style>
+
+<!-- Dependent files -->
+<script type='text/javascript' src="/common/Enums.js"></script>
+<script type='text/javascript' src="/socket.io/socket.io.js"></script>
+<script type='text/javascript' src="/common/mathUtils.js"></script>
+<script type='text/javascript' src="/common/Effect.js"></script>
+
+<script type='text/javascript' src="/common/utils.js"></script>
+<script type='text/javascript' src="/common/ObjectFactory.js"></script>
+<script type='text/javascript' src="/common/Player.js"></script>
+<script type='text/javascript' src="/client/game-client.js"></script>
+<script type='text/javascript' src="/client/jquery.js"></script>
+
+<script>
+var game;
+$(document).ready(function(){
+	game = new Game();
+	game.init();
+});
+
+</script>
+</head>
+<body>
+	<canvas style='margin-left: auto;margin-right: auto;' id='board'>
+</body>
+
+
+</html>
