@@ -133,38 +133,49 @@
 	}	
 
 	function onKeyPressed(playerId, keysPressed){
-		var player = board.players.get(playerId);
-		console.log('player : %j', player);
-		
-		var newVec = new MathUtils.Vector(player.v.x, player.v.y);
-		var accel = player.getPropertyValue(Enums.PlayerProperties.accel);
-		var maxSpeed = player.getPropertyValue(Enums.PlayerProperties.speed);
-		// w			
-		if(keysPressed.indexOf('87') > -1){
-			 console.log('adding - accel to newvec')
-			 newVec.y -= accel;
-			 if(newVec.y < -maxSpeed){newVec.y = -maxSpeed}
+		if(keysPressed.indexOf('87') > -1 || keysPressed.indexOf('65') > -1 ||
+			keysPressed.indexOf('83') > -1 || keysPressed.indexOf('68') > -1)
+		{
+			var player = board.players.get(playerId);
+			var newVec = new MathUtils.Vector(player.v.x, player.v.y);
+			var accel = player.getPropertyValue(Enums.PlayerProperties.accel);
+			console.log('player accel = ' + accel)
+			var maxAccel = player.getPropertyValue(Enums.PlayerProperties.accel, "max");
+
+			// w			
+			if(keysPressed.indexOf('87') > -1){
+				 console.log('adding - accel to newvec')
+				 newVec.y -= accel;
+				 console.log('newVec.y after - accel = ' + newVec.y)
+				 if(newVec.y < -maxAccel){newVec.y = -maxAccel}
+				 console.log('newVec.y maxAccel check = ' + newVec.y)
+			}	
+			// a
+			if(keysPressed.indexOf('65') > -1){
+				 newVec.x -= accel;
+				 if(newVec.x < -maxAccel){newVec.x = -maxAccel}
+			}
+			// s
+			if(keysPressed.indexOf('83') > -1){
+				console.log('adding + accel to newvec')
+				 newVec.y += accel;
+				if(newVec.y > maxAccel){newVec.y = maxAccel}
+			}
+			// d
+			if(keysPressed.indexOf('68') > -1){
+				newVec.x += accel;
+				if(newVec.x > maxAccel){newVec.x = maxAccel}
+			}
+			console.log('newVec.x = ' + newVec.x)
+			console.log('newVec.y = ' + newVec.y)
+			console.log('player.x = ' + player.v.x)
+			console.log('player.y = ' + player.v.y)
+			if(newVec.x != player.v.x || newVec.y != player.v.y){
+				console.log('updating player vec')
+				updatePlayer({'id': playerId, 'v': newVec});
+			}
 		}
-		// a
-		if(keysPressed.indexOf(65) > -1){
-			 newVec.x -= accel;
-			 if(newVec.x < -maxSpeed){newVec.x = -maxSpeed}
-		}
-		// s
-		if(keysPressed.indexOf(83) > -1){
-			console.log('adding + accel to newvec')
-			 newVec.y += accel;
-			if(newVec.y > maxSpeed){newVec.y = maxSpeed}
-		}
-		// d
-		if(keysPressed.indexOf(68) > -1){
-			newVec.x += accel;
-			if(newVec.x > maxSpeed){newVec.x = maxSpeed}
-		}
-		
-		if(newVec.x != player.v.x || newVec.y != player.v.y){
-			updatePlayer({'id': playerId, 'v': newVec});
-		}
+		// end if w,s,a,d
 	}
 	
 	// socket functions //
@@ -195,6 +206,8 @@
 	}
 
 	function updatePlayer(playerObj){
+		console.log('in updatePlayer, playerObj = ' + playerObj);
+
 		var player = board.players.get(playerObj.id);
 		var changedProps = Utils.copyTo(player, playerObj);
 		console.log('emitting update player')
@@ -206,6 +219,7 @@
 
 	//-- Public functions --//
 	exports.onConnection = function(socket) {	
+		console.log('start on onConnection')
 		if(counter > 100) counter = 1;
 		var id = ++counter + Math.round(Math.random()*100);
 		sockets[id] = socket;
@@ -217,6 +231,7 @@
 		});
 		
 		board.players.add(id, newPlayer);
+		console.log('player in onConnection: %j', newPlayer);
 		
 		socket.on(Enums.SocketMessage.keysPressed, function(keys){ onKeyPressed(id, keys)} );
 		socket.on('disconnect', function(){onPlayerDisconnect(id)});
