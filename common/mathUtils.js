@@ -1,6 +1,7 @@
 (function(exports){
 	//****** Vector *******//
 	exports.Vector = function(x, y) {
+		console.log('in vector constructor')
 	    this.x = x;
 	    this.y = y;
 	}

@@ -29,10 +29,6 @@ var Game =(function(){
 			Utils.copyTo(board.effects.get(data.id), data);
 		}
 
-		function createPlayer(playerObj){
-			var tmpPlayer = new Player(playerObj);
-		}
-
 		this.getContext = function(){ return ctx; }
 		this.getHeight = function(){ return board.height; }
 		this.getKeysPressed = function(){ return keysPressed; }
@@ -42,7 +38,7 @@ var Game =(function(){
 			c.height = board.height;
 			c.width = board.width;
 
-			socket = io.connect('192.168.56.1:8001');
+			socket = io.connect('192.168.1.5:8000');
 			socket.on(Enums.SocketMessage.load, function(data){
 				clear();
 				
@@ -116,7 +112,6 @@ var Game =(function(){
 			for(var i = 0; i < playerKeys.length; i++){
 				var player = board.players.get(playerKeys[i]);
 				player.process();
-				player.draw();
 			}
 
 			var effectValues = board.effects.getValues();

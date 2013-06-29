@@ -4,9 +4,10 @@
 		"effectAdded": 		'1',
 		"effectCollected": 	'2',
 		"keysPressed": 		'3',
-		"removeEffect": 	'4',
-		"removePlayer": 	'5',
-		"updatePlayer": 	'6'
+		"load": 			'4', 
+		"removeEffect": 	'5',
+		"removePlayer": 	'6',
+		"updatePlayer": 	'7'
 	}
 
 	exports.EffectConfig = {

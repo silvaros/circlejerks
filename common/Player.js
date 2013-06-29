@@ -7,7 +7,7 @@
 		var id = config.id || '';
 		var radius = config.radius || 14;
 		var position = config.p || new MathUtils.Vector(0, 0); 
-		var velocity = new MathUtils.Vector(0, 0);	
+		this.v = new MathUtils.Vector(0, 0);	
 		var r = config.r == undefined ? 0 : config.r;
 		var g = config.g == undefined ? 0 : config.g;
 		var b = config.b == undefined ? 255 : config.b;
@@ -15,7 +15,7 @@
 		
 		var effects = {'pos' : {}, 'neg': {}};
 		var properties = {};
-		properties[Enums.PlayerProperties.accel]= 		{value: 10, nominal: 10, min: 0, max:100};
+		properties[Enums.PlayerProperties.accel]= 		{value: 0, nominal: 0, min: -10, max:10};
 		properties[Enums.PlayerProperties.attack]=	 	{value: 10, nominal:10, min: 0, max:100};
 		properties[Enums.PlayerProperties.defence]=		{value: 10, nominal: 10, min: 0, max:100};
 		properties[Enums.PlayerProperties.speed]= 		{value: 0, nominal: 10, min: 0, max:30};
@@ -72,14 +72,20 @@
 			}
 		}
 		
-		function getPropertyValue(prop){
-			var property = properties[prop];
-			if(!property) return;
-			//only send out values withing limits on get
-			var val = property.value;
-			if(val > property.max) val = property.max;
-			else if (val < property.min) val = property.min;
-			return val;
+		this.getPropertyValue = function(prop, aspect){
+			if(aspect == 'value' || !aspect){
+				var property = properties[prop];
+				if(!property) return;
+				//only send out values withing limits on get
+				var val = property.value;
+				if(val > property.max) val = property.max;
+				else if (val < property.min) val = property.min;
+				return val;
+			}
+
+			else {
+				return properties[prop][aspect];
+			}
 		}			
 			
 		this.draw = function(){
@@ -100,10 +106,11 @@
 			return {
 				'id': id,
 				'p': position,
-				'v': velocity
+				'v': this.v
 			}
 		}
-		this.getPosition = function(){ return position;}
+
+		this.getPosition = function(){ return position; }
 		this.getRadius = function(){ return radius; }
 		this.getX = function(){	return position.x; }
 		this.getY = function(){	return position.y; }
@@ -111,31 +118,31 @@
 		this.move = function(){
 			// simulate friction
 			var friction = properties[Enums.PlayerProperties.friction].value;
-			if(velocity.y < 0){
-				if(velocity.y + friction > 0) velocity.y = 0;
-				else velocity.y += friction;
+			if(this.v.y < 0){
+				if(this.v.y + friction > 0) this.v.y = 0;
+				else this.v.y += friction;
 			}
-			else if(velocity.y > 0){
-				if(velocity.y - friction < 0) velocity.y = 0;
-				else velocity.y -= friction;
+			else if(this.v.y > 0){
+				if(this.v.y - friction < 0) this.v.y = 0;
+				else this.v.y -= friction;
 			}
 			
-			if(velocity.x < 0){
-				if(velocity.x + friction > 0) velocity.x = 0;
-				else velocity.x += friction;
+			if(this.v.x < 0){
+				if(this.v.x + friction > 0) this.v.x = 0;
+				else this.v.x += friction;
 			}
-			else if(velocity.x > 0){
-				if(velocity.x - friction < 0) velocity.x = 0;
-				else velocity.x -= friction;
+			else if(this.v.x > 0){
+				if(this.v.x - friction < 0) this.v.x = 0;
+				else this.v.x -= friction;
 			}	
 			
-			velocity.y = Math.round(velocity.y*100)/100;
-			velocity.x = Math.round(velocity.x*100)/100;
+			this.v.y = Math.round(this.v.y*100)/100;
+			this.v.x = Math.round(this.v.x*100)/100;
 			
-			var newX = Math.floor(position.x + velocity.x);
-			var newY = Math.floor(position.y + velocity.y);
+			var newX = Math.floor(position.x + this.v.x);
+			var newY = Math.floor(position.y + this.v.y);
 			
-			if(velocity.x != 0 || velocity.y != 0){
+			if(this.v.x != 0 || this.v.y != 0){
 				var width = game.getWidth();
 				var height = game.getHeight();					
 
@@ -147,8 +154,6 @@
 				if(newY < radius) position.y = radius;
 				else if(newY > height - radius) position.y = height - radius;
 				else position.y = newY;
-
-				game.playerUpdated();
 			}
 		}
 	
