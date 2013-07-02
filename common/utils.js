@@ -56,7 +56,10 @@
 		// return only the properties that have changed
 		var changedProperties = {};
 		for(var prop in fromObj){
+			if(typeof fromObj[prop] == "function") continue;
+			
 			if(typeof fromObj[prop] == "object"){
+				if(!toObj[prop]) toObj[prop] = {};
 				changedProperties[prop] = exports.copyTo(toObj[prop],fromObj[prop]);
 			}
 			else if(toObj[prop] != fromObj[prop] || prop == "id"){

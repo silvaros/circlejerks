@@ -6,8 +6,6 @@
 	exports.constructor = function(config){
 		var id = config.id || '';
 		var radius = config.radius || 14;
-		var position = config.p || new MathUtils.Vector(0, 0); 
-		this.v = new MathUtils.Vector(0, 0);	
 		var r = config.r == undefined ? 0 : config.r;
 		var g = config.g == undefined ? 0 : config.g;
 		var b = config.b == undefined ? 255 : config.b;
@@ -27,6 +25,9 @@
 		// set accel value
 		properties[Enums.PlayerProperties.accel].value = 
 			Math.round( 3/ properties[Enums.PlayerProperties.mass].value*100 )/100
+		
+		this.p = config.p || new MathUtils.Vector(0, 0); 
+		this.v = new MathUtils.Vector(0, 0);	
 		
 		function addEffect(effect){
 			var addTimer = function(effect){
@@ -88,12 +89,11 @@
 			}
 		}			
 			
-		this.draw = function(){
-			var ctx = game.getContext();
+		this.draw = function(ctx){
 			ctx.save();
 			ctx.fillStyle = this.getColor();
 			ctx.beginPath();
-			ctx.arc(position.x, position.y, radius, 0, 2*Math.PI, false);
+			ctx.arc(this.p.x, this.p.y, radius, 0, 2*Math.PI, false);
 			ctx.fill();
 			ctx.restore();
 		}
@@ -105,17 +105,17 @@
 		this.getData = function(){
 			return {
 				'id': id,
-				'p': position,
+				'p': this.p,
 				'v': this.v
 			}
 		}
 
-		this.getPosition = function(){ return position; }
+		this.getPosition = function(){ return this.p; }
 		this.getRadius = function(){ return radius; }
-		this.getX = function(){	return position.x; }
-		this.getY = function(){	return position.y; }
+		this.getX = function(){	return this.p.x; }
+		this.getY = function(){	return this.p.y; }
 
-		this.move = function(){
+		this.process = function(){
 			// simulate friction
 			var friction = properties[Enums.PlayerProperties.friction].value;
 			if(this.v.y < 0){
@@ -135,33 +135,32 @@
 				if(this.v.x - friction < 0) this.v.x = 0;
 				else this.v.x -= friction;
 			}	
-			
+		}
+
+		this.move = function(bounds){
 			this.v.y = Math.round(this.v.y*100)/100;
 			this.v.x = Math.round(this.v.x*100)/100;
-			
-			var newX = Math.floor(position.x + this.v.x);
-			var newY = Math.floor(position.y + this.v.y);
-			
+						
 			if(this.v.x != 0 || this.v.y != 0){
-				var width = game.getWidth();
-				var height = game.getHeight();					
+				var newX = Math.floor(this.p.x + this.v.x);
+				var newY = Math.floor(this.p.y + this.v.y);
+			
+				var leftMost = bounds.left + radius;
+				var rightMost = bounds.right - radius;
+				var topMost = bounds.top + radius;				
+				var bottomMost = bounds.bottom - radius;
 
 				// keep the this on the board
-				if(newX < radius) position.x = radius;
-				else if(newX > width - radius) position.x = width - radius;
-				else position.x = newX;
+				if(newX < leftMost) this.p.x = leftMost;
+				else if(newX > rightMost) this.p.x = rightMost;
+				else this.p.x = newX;
 
-				if(newY < radius) position.y = radius;
-				else if(newY > height - radius) position.y = height - radius;
-				else position.y = newY;
+				if(newY < topMost) this.p.y = topMost;
+				else if(newY > bottomMost) this.p.y = bottomMost;
+				else this.p.y = newY;
 			}
 		}
 	
-		this.process = function(){
-			this.move();
-			this.draw();
-		}
-		
 		this.setColor = function(red,green,blue,alpha){
 			r = red || r;
 			g = green || g;

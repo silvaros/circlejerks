@@ -48,7 +48,7 @@
 		}
 	
 		this.process = function(){
-			this.draw();
+			this.incrementTimer()
 		}
 	
 		this.shouldRemove = function(){

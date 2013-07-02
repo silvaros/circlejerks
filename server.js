@@ -13,10 +13,10 @@ app.get('/', function(req, res){
 app.use(express.static(__dirname));
 
 server.listen(8000);
+game.init();
 
 io.sockets.on('connection', game.onConnection);
 
-game.init();
 
 
 
