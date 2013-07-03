@@ -32,7 +32,7 @@ store
 		solid
 			player coliding w/ shield stops completely
 		damaging 
-			player coliding w/ shield takes a little damage
+			player coliding w/ shield takes some damage
 			
 	rations (make dropable)
 		nitro / molassas (speed)
@@ -52,7 +52,7 @@ team play
 
 match info panel
 	players in match
-	
+	players can sub in and out?
 
 gather players for game
 	players can "host" games, set rules

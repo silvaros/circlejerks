@@ -52,17 +52,22 @@
 		p2.v.tx(dn.multiply(-(cr * p1Mass * (v1 - v2) + p2Mass * v2 + p1Mass * v1) / sm));
 	}
 	
-	exports.copyTo = function(toObj, fromObj){
+	exports.copyTo = function(toObj, fromObj, preventIdCopy){
 		// return only the properties that have changed
-		var changedProperties = {};
+		var changedProperties;
 		for(var prop in fromObj){
 			if(typeof fromObj[prop] == "function") continue;
 			
 			if(typeof fromObj[prop] == "object"){
 				if(!toObj[prop]) toObj[prop] = {};
-				changedProperties[prop] = exports.copyTo(toObj[prop],fromObj[prop]);
+				var copyResult = exports.copyTo(toObj[prop],fromObj[prop], preventIdCopy);
+				if(copyResult){
+					if(!changedProperties) changedProperties = {};
+					changedProperties[prop] = copyResult;
+				}
 			}
-			else if(toObj[prop] != fromObj[prop] || prop == "id"){
+			else if(toObj[prop] != fromObj[prop] || (prop == "id" && preventIdCopy !== true)){
+				if(!changedProperties) changedProperties = {};
 				changedProperties[prop] = fromObj[prop];
 				toObj[prop] = fromObj[prop];
 			}
@@ -92,7 +97,6 @@
 					if (_key === key) return true;
 				}
 			}
-	
 			return false;
 		}
 		
@@ -122,6 +126,14 @@
 		
 		this.remove = function(key) {
 			if(key != undefined) delete data[key];
+		}
+
+		this.toJSON = function(){
+			var obj = {};
+			for(var id in data){
+				obj[id] = data[id].toJSON();
+			}
+			return obj;
 		}
 	}
 	//**** End Dictionary *****//

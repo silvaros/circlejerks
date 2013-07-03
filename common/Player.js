@@ -16,17 +16,19 @@
 		properties[Enums.PlayerProperties.accel]= 		{value: 0, nominal: 0, min: -10, max:10};
 		properties[Enums.PlayerProperties.attack]=	 	{value: 10, nominal:10, min: 0, max:100};
 		properties[Enums.PlayerProperties.defence]=		{value: 10, nominal: 10, min: 0, max:100};
-		properties[Enums.PlayerProperties.speed]= 		{value: 0, nominal: 10, min: 0, max:30};
+		properties[Enums.PlayerProperties.speed]= 		{value: 0, nominal: 0, min: 0, max:15 };
 		properties[Enums.PlayerProperties.health]= 		{value: 0, nominal: 50, min: 0, max:100};
 		properties[Enums.PlayerProperties.mass]= 		{value: 6, nominal: 6, min: 1, max:25};
-		properties[Enums.PlayerProperties.friction]= 	{value: .1, nominal: .1, min: 0, max:1};
+		properties[Enums.PlayerProperties.friction]= 	{value: .2, nominal: .2, min: 0, max:1};
 		properties[Enums.PlayerProperties.elasticity]=	{value: 1, nominal: 1, min: 1, max:1};
 
 		// set accel value
 		properties[Enums.PlayerProperties.accel].value = 
-			Math.round( 3/ properties[Enums.PlayerProperties.mass].value*100 )/100
+			Math.round( 5/ properties[Enums.PlayerProperties.mass].value*100 )/100
 		
-		this.p = config.p || new MathUtils.Vector(0, 0); 
+		var initialX = config.p ? config.p.x || 0 : 0;
+		var initialY = config.p ? config.p.y || 0 : 0;
+		this.p = new MathUtils.Vector(initialX, initialY); 
 		this.v = new MathUtils.Vector(0, 0);	
 		
 		function addEffect(effect){
@@ -102,40 +104,10 @@
 			return 'rgba('+ r +', '+ g + ', ' + b + ', ' + a + ')';
 		}
 		
-		this.getData = function(){
-			return {
-				'id': id,
-				'p': this.p,
-				'v': this.v
-			}
-		}
-
 		this.getPosition = function(){ return this.p; }
 		this.getRadius = function(){ return radius; }
 		this.getX = function(){	return this.p.x; }
 		this.getY = function(){	return this.p.y; }
-
-		this.process = function(){
-			// simulate friction
-			var friction = properties[Enums.PlayerProperties.friction].value;
-			if(this.v.y < 0){
-				if(this.v.y + friction > 0) this.v.y = 0;
-				else this.v.y += friction;
-			}
-			else if(this.v.y > 0){
-				if(this.v.y - friction < 0) this.v.y = 0;
-				else this.v.y -= friction;
-			}
-			
-			if(this.v.x < 0){
-				if(this.v.x + friction > 0) this.v.x = 0;
-				else this.v.x += friction;
-			}
-			else if(this.v.x > 0){
-				if(this.v.x - friction < 0) this.v.x = 0;
-				else this.v.x -= friction;
-			}	
-		}
 
 		this.move = function(bounds){
 			this.v.y = Math.round(this.v.y*100)/100;
@@ -161,11 +133,42 @@
 			}
 		}
 	
+		this.process = function(){
+			// simulate friction
+			var friction = properties[Enums.PlayerProperties.friction].value;
+			if(this.v.y < 0){
+				if(this.v.y + friction > 0) this.v.y = 0;
+				else this.v.y += friction;
+			}
+			else if(this.v.y > 0){
+				if(this.v.y - friction < 0) this.v.y = 0;
+				else this.v.y -= friction;
+			}
+			
+			if(this.v.x < 0){
+				if(this.v.x + friction > 0) this.v.x = 0;
+				else this.v.x += friction;
+			}
+			else if(this.v.x > 0){
+				if(this.v.x - friction < 0) this.v.x = 0;
+				else this.v.x -= friction;
+			}	
+		}
+
 		this.setColor = function(red,green,blue,alpha){
 			r = red || r;
 			g = green || g;
 			b = blue || b;
 			a = alpha || a;
 		}
+
+		this.toJSON = function(){
+			return {
+				'id': id,
+				'p': this.p.toJSON(),
+				'v': this.v.toJSON()
+			}
+		}
+
 	}
 })(typeof exports === 'undefined'? this['Player'] = {} : exports);

@@ -1,9 +1,9 @@
-var Game =(function(){
+var Game = (function(){
 	function Game(){
 		var myId = 0;
 		var keysPressed = new Utils.JsDictionary();
 		var gLoop = 0;
-		var FPS = 25;
+		var FPS = 20;
 		var socket;
 		
 		var c = document.getElementById('board');
@@ -37,6 +37,11 @@ var Game =(function(){
 					keysPressed.remove(e.keyCode);
 				});
 
+				window.onblur = function(){
+					keysPressed.clear();
+					socket.emit(Enums.SocketMessage.keysPressed, keysPressed.getKeys());
+				}
+
 				runLoop();
 			});
 
@@ -45,11 +50,13 @@ var Game =(function(){
 			// when the server verifies that this client was the first to collect the effect
 		//	socket.on(Enums.SocketMessage.effectCollected, GameEngine.onEffectCollected);
 			// when any player should no longer be drawn
-			socket.on(Enums.SocketMessage.removePlayer, GameEngine.onRemovePlayer);			
+			socket.on(Enums.SocketMessage.removePlayer, GameEngine.removePlayer);			
 			// when any effect should no longer be drawn
-			socket.on(Enums.SocketMessage.removeEffect, GameEngine.onRemoveEffect);			
+		//	socket.on(Enums.SocketMessage.removeEffect, GameEngine.onRemoveEffect);			
+			// when another player joins
+			socket.on(Enums.SocketMessage.playerJoined, function(data){ GameEngine.addPlayer(data.id, data); });
 			// the server will inform us of other players updates by telling us to 'updatePlayer'
-			socket.on(Enums.SocketMessage.updatePlayer, GameEngine.onUpdatePlayer);
+			socket.on(Enums.SocketMessage.syncClient, function(data){ GameEngine.onSyncClient(data, myId); });
 
 			window.onunload = function(){
 				socket.disconnect();
@@ -58,7 +65,7 @@ var Game =(function(){
 		
 		function runLoop(){
 			clear();
-			
+
 			// tell sever what keys are pressed
 			if(keysPressed.length() > 0){
 				socket.emit(Enums.SocketMessage.keysPressed, keysPressed.getKeys());
@@ -66,7 +73,8 @@ var Game =(function(){
 			}
 			
 			GameEngine.processBoardObjects();
-			GameEngine.drawBoardObjects(ctx)
+			GameEngine.checkCollisions();
+			GameEngine.drawBoardObjects(ctx);
 
 			gLoop = setTimeout(runLoop, 1000/FPS);
 		}

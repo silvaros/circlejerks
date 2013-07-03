@@ -7,31 +7,9 @@
 		'players': new Utils.JsDictionary(), 
 		'effects': new Utils.JsDictionary(),
 		'hazards': new Utils.JsDictionary()
-	};
+	}
 	
-	var gLoop = 0;
-	var FPS = 25;
-
 	//-- Private functions --//
-	function checkCollisions(){
-		var playerIds = board.players.getKeys();
-		do{
-			var curPlayerId = playerIds.pop();
-			var curPlayer = board.players.get(curPlayerId);
-			if(curPlayer){
-				// check collision vs other players
-				for(var i = 0; i < playerIds.length; i++){
-					var otherPlayer = board.players.get(playerIds[i]);
-					checkPlayerOnPlayerCollision(curPlayer, otherPlayer);
-				}
-				
-				checkPlayerOnEffectCollision(curPlayer);
-				checkPlayerOnHazardCollision(curPlayer);
-			}
-		}
-		while(playerIds.length > 0);
-	}	
-		
 	function checkPlayerOnEffectCollision(curPlayer){
 		var effectIds = board.effects.getKeys();
 		// check collision vs power-ups/downs
@@ -40,7 +18,7 @@
 			
 			//console.log('dist from ' + curPlayer.id + ' to ' + curEffect.id + 'is ' + MathUtils.distanceBetween(curPlayer, curEffect)	);
 			if(MathUtils.distanceBetween(curPlayer, curEffect) <= Math.pow(curPlayer.getRadius()/2 + curEffect.getRadius()/2, 2)){
-				console.log('collision detected');
+				//console.log('collision detected');
 		
 				// tell the player they got the effect
  				sockets[curPlayer.id].emit(Enums.SocketMessage.effectCollected, curEffect.id);
@@ -70,11 +48,8 @@
 		var distance = MathUtils.distanceBetween(curPlayer, otherPlayer);
 		if(distance <= Math.pow(curPlayer.getRadius() + otherPlayer.getRadius(), 2)){
 			//do collision stuff
-//			console.log("~~~~~~~~~ Collision ~~~~~~~~~~~~~``")
+			console.log("~~~~~~~~~ Collision ~~~~~~~~~~~~~``")
 			Utils.applyPlayerCollision(curPlayer, otherPlayer);
-			
-			emitToClients(Enums.SocketMessage.updatePlayer, curPlayer);
-			emitToClients(Enums.SocketMessage.updatePlayer, otherPlayer);
 		}
 	}
 
@@ -98,26 +73,40 @@
 		player.effects.get(effect.property) += effect.value;
 	}
 
-
-	function onUpdatePlayer(playerConfig){
-		if(!board.players.get(playerConfig.id))
-			board.players.add(playerConfig.id, new Player(playerConfig));
+	exports.checkCollisions = function(){
+		var playerIds = board.players.getKeys();
+		do{
+			var curPlayerId = playerIds.pop();
+			var curPlayer = board.players.get(curPlayerId);
+			if(curPlayer){
+				// check collision vs other players
+				for(var i = 0; i < playerIds.length; i++){
+					var otherPlayer = board.players.get(playerIds[i]);
+					checkPlayerOnPlayerCollision(curPlayer, otherPlayer);
+				}
+				
+				checkPlayerOnEffectCollision(curPlayer);
+				checkPlayerOnHazardCollision(curPlayer);
+			}
+		}
+		while(playerIds.length > 0);
+	}
+	
+	exports.addPlayer = function(id, playerConfig){
+		if(!board.players.get(id))
+			board.players.add(id, exports.createPlayer(id, playerConfig));
 		else
-			Utils.copyTo(board.players.get(playerConfig.id), playerConfig);
+			Utils.copyTo(board.players.get(id), playerConfig);
+
+		return board.players.get(id);
 	}
 
-	exports.addPlayer = function(id, player){
-		board.players.add(id, player);
-	}
+	exports.createPlayer = function(id, playerConfig){
+		if(typeof playerConfig == 'object') return new Player(playerConfig);
 
-	exports.createPlayer = function(id){
 		var x = Math.round(Math.random()*(board.width));
 		var y = Math.round(Math.random()*(board.height));
-		var newPlayer = new Player({
-			'id': id, 'p': new MathUtils.Vector(x, y)
-		});
-		
-		return newPlayer;
+		return new Player({'id': id, 'p': new MathUtils.Vector(x, y)});
 	}
 
 	exports.drawBoardObjects = function(ctx){
@@ -141,16 +130,10 @@
 	exports.getPlayerData = function(id){
 		if(id != undefined){
 			var player = board.players.get(id);
-			if(player) return player.getData();
+			if(player) return player.toJSON();
 		}
 		else {
-			var players = [];
-			var keys = board.players.getKeys();
-			for(var i = 0; i < keys.length; i++){
-				var player = board.players.get(keys[i]);
-				players.push(player.getData());
-			}
-			return players;
+			return board.players.toJSON();
 		}
 	}
 
@@ -159,8 +142,8 @@
 			'height': board.height,
 			'width': board.width,
 			'players': exports.getPlayerData(),
-			'effects': board.effects.getValues(),
-			'hazards': board.hazards.getValues()	
+			'effects': board.effects.toJSON(),
+			'hazards': board.hazards.toJSON()	
 		}
 	}
 
@@ -172,10 +155,10 @@
 
 		//when we init the board for a client
 		if(boardObj.players){
-			for(var i = 0; i < boardObj.players.length; i++){
-				var player = boardObj.players[i];
+			for(var pId in boardObj.players){
+				var player = boardObj.players[pId];
 				// copy the list of players from the server to the client 
-				board.players.add(player.id, new Player(boardObj.players[i]));
+				exports.addPlayer(pId, player);
 			}
 		}
 
@@ -197,46 +180,52 @@
 			keysPressed.indexOf('83') > -1 || keysPressed.indexOf('68') > -1)
 		{
 			var player = board.players.get(playerId);
-			var newVec = new MathUtils.Vector(0, 0);
+			var newVelocity = new MathUtils.Vector(player.v.x, player.v.y);
 			var accel = player.getPropertyValue(Enums.PlayerProperties.accel);
-			console.log('player accel = ' + accel)
-			var maxAccel = player.getPropertyValue(Enums.PlayerProperties.accel, "max");
+			//console.log('player accel = ' + accel)
+			var maxSpeed = player.getPropertyValue(Enums.PlayerProperties.speed, "max");
 
 			// w			
 			if(keysPressed.indexOf('87') > -1){
-				 console.log('adding - accel to newvec')
-				 newVec.y -= accel;
-				 console.log('newVec.y after - accel = ' + newVec.y)
-				 if(newVec.y < -maxAccel){newVec.y = -maxAccel}
-				 console.log('newVec.y maxAccel check = ' + newVec.y)
+				 //console.log('adding - accel to newVelocity')
+				 newVelocity.y -= accel;
+				 //console.log('newVelocity.y after - accel = ' + newVelocity.y)
+				 if(newVelocity.y < -maxSpeed){newVelocity.y = -maxSpeed}
+				 //console.log('newVelocity.y maxSpeed check = ' + newVelocity.y)
 			}	
 			// a
 			if(keysPressed.indexOf('65') > -1){
-				 newVec.x -= accel;
-				 if(newVec.x < -maxAccel){newVec.x = -maxAccel}
+				 newVelocity.x -= accel;
+				 if(newVelocity.x < -maxSpeed){newVelocity.x = -maxSpeed}
 			}
 			// s
 			if(keysPressed.indexOf('83') > -1){
-				console.log('adding + accel to newvec')
-				 newVec.y += accel;
-				if(newVec.y > maxAccel){newVec.y = maxAccel}
+				//console.log('adding + accel to newVelocity')
+				 newVelocity.y += accel;
+				if(newVelocity.y > maxSpeed){newVelocity.y = maxSpeed}
 			}
 			// d
 			if(keysPressed.indexOf('68') > -1){
-				newVec.x += accel;
-				if(newVec.x > maxAccel){newVec.x = maxAccel}
+				newVelocity.x += accel;
+				if(newVelocity.x > maxSpeed){newVelocity.x = maxSpeed}
 			}
-			console.log('newVec.x = ' + newVec.x)
-			console.log('newVec.y = ' + newVec.y)
-			console.log('player.x = ' + player.v.x)
-			console.log('player.y = ' + player.v.y)
-			if(newVec.x != player.v.x || newVec.y != player.v.y){
+			//console.log('newVelocity.x = ' + newVelocity.x)
+			//console.log('newVelocity.y = ' + newVelocity.y)
+			//console.log('player.x = ' + player.v.x)
+			//console.log('player.y = ' + player.v.y)
+			if(newVelocity.x != player.v.x || newVelocity.y != player.v.y){
 				var player = board.players.get(playerId);
 				// return the properties that changed
-				return Utils.copyTo(player, {'v': newVec} );
+				Utils.copyTo(player, {'v': newVelocity}, true);
 			}
 		}
 		// end if w,s,a,d
+	}
+
+	exports.onSyncClient = function(playersConfig, clientId){
+		for(var playerId in playersConfig){
+			Utils.copyTo(board.players.get(playerId), playersConfig[playerId] || {});
+		}
 	}
 
 	exports.processBoardObjects = function(){
