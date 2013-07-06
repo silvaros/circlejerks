@@ -22,14 +22,21 @@ var Game = (function(){
 
 		this.init = function(players){
 			socket = io.connect('127.0.0.1:8000');
-			socket.on(Enums.SocketMessage.load, function(data){
+			socket.on(Enums.EngineMessage.load, function(data){
 				myId = data.id;
+				
 				GameEngine.initBoard(data.board, myId);
 				c.height = GameEngine.getBounds().bottom;
 				c.width = GameEngine.getBounds().right;
-			
-				clear();
-								
+
+				var me = GameEngine.getPlayer(myId);
+				me.addWeapon("bullet");
+				me.addWeapon("bullet");
+				me.addWeapon("laser");
+				me.addWeapon("grenade");
+				me.addWeapon("spike");
+							
+				// Listeners
 				document.addEventListener('keydown', function(e){
 					keysPressed.add(e.keyCode, true);
 				});					
@@ -37,26 +44,31 @@ var Game = (function(){
 					keysPressed.remove(e.keyCode);
 				});
 
-				window.onblur = function(){
-					keysPressed.clear();
-					socket.emit(Enums.SocketMessage.keysPressed, keysPressed.getKeys());
+				document.getElementById('board').onclick = function(clickPos){
+					GameEngine.onWeaponFired(myId, {x: clickPos.clientX, y: clickPos.clientY});
+					socket.emit(Enums.PlayerAction.weaponFired, clickPos);
 				}
 
+				window.onblur = function(){
+					keysPressed.clear();
+				}
+
+				
 				runLoop();
 			});
 
 			// when the server creates and effect ('power-up') and places it on the board
-		//	socket.on(Enums.SocketMessage.effectAdded, GameEngine.copyEffectToClient);
+		//	socket.on(Enums.EngineMessage.effectAdded, GameEngine.copyEffectToClient);
 			// when the server verifies that this client was the first to collect the effect
-		//	socket.on(Enums.SocketMessage.effectCollected, GameEngine.onEffectCollected);
+		//	socket.on(Enums.EngineMessage.effectCollected, GameEngine.onEffectCollected);
 			// when any player should no longer be drawn
-			socket.on(Enums.SocketMessage.removePlayer, GameEngine.removePlayer);			
+			socket.on(Enums.EngineMessage.removePlayer, GameEngine.removePlayer);			
 			// when any effect should no longer be drawn
-		//	socket.on(Enums.SocketMessage.removeEffect, GameEngine.onRemoveEffect);			
+		//	socket.on(Enums.EngineMessage.removeEffect, GameEngine.onRemoveEffect);			
 			// when another player joins
-			socket.on(Enums.SocketMessage.playerJoined, function(data){ GameEngine.addPlayer(data.id, data); });
+			socket.on(Enums.EngineMessage.playerJoined, function(data){ GameEngine.addPlayer(data.id, data); });
 			// the server will inform us of other players updates by telling us to 'updatePlayer'
-			socket.on(Enums.SocketMessage.syncClient, function(data){ GameEngine.onSyncClient(data, myId); });
+			socket.on(Enums.EngineMessage.syncClient, function(data){ GameEngine.onSyncClient(data, myId); });
 
 			window.onunload = function(){
 				socket.disconnect();
@@ -68,7 +80,7 @@ var Game = (function(){
 
 			// tell sever what keys are pressed
 			if(keysPressed.length() > 0){
-				socket.emit(Enums.SocketMessage.keysPressed, keysPressed.getKeys());
+				socket.emit(Enums.EngineMessage.keysPressed, keysPressed.getKeys());
 				GameEngine.onKeyPressed(myId, keysPressed.getKeys());
 			}
 			

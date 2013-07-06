@@ -4,6 +4,16 @@
 		this.x = x;
 	    this.y = y;
 
+	    this.addVector = function(vec){
+	    	this.x += vec.x;
+	    	this.y += vec.y;
+	    }
+
+	    this.calc2PointVector = function(start, end){
+	    	var newVec = new exports.Vector((start.x - end.x)*-1, (start.y - end.y)*-1);
+	    	return newVec.normalize(); 
+	    }
+
 	    this.dot = function(v) { return this.x * v.x + this.y * v.y; }
 
 		this.length = function() { return Math.sqrt(this.x * this.x + this.y * this.y); }

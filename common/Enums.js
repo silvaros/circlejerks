@@ -1,5 +1,5 @@
 (function(exports){
-	exports.SocketMessage = {
+	exports.EngineMessage = {
 		"collision":		'0', 
 		"effectAdded": 		'1',
 		"effectCollected": 	'2',
@@ -18,6 +18,10 @@
 		"visibleLifespan": 	'3'
 	}
 	
+	exports.PlayerAction = {
+		'weaponFired' :  	'0'
+	}
+
 	exports.PlayerProperties = {
 		'accel': 			'0',
 		'attack': 			'1',

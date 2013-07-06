@@ -1,4 +1,5 @@
 (function(exports){
+	WeaponFactory = typeof WeaponFactory != "undefined" ? WeaponFactory : require('../common/WeaponFactory');
 	Player = (typeof Player != "undefined" ? Player : require('../common/Player')).constructor;
 	MathUtils = typeof MathUtils != "undefined" ? MathUtils : require('../common/mathUtils');
 
@@ -6,7 +7,8 @@
 		'height': 0, 'width': 0, 
 		'players': new Utils.JsDictionary(), 
 		'effects': new Utils.JsDictionary(),
-		'hazards': new Utils.JsDictionary()
+		'hazards': new Utils.JsDictionary(),
+		'weapons': new Utils.JsDictionary()
 	}
 	
 	//-- Private functions --//
@@ -21,8 +23,8 @@
 				//console.log('collision detected');
 		
 				// tell the player they got the effect
- 				sockets[curPlayer.id].emit(Enums.SocketMessage.effectCollected, curEffect.id);
-				emitToClients(Enums.SocketMessage.removeEffect, curEffect.id, [curPlayer.id]);
+ 				sockets[curPlayer.id].emit(Enums.EngineMessage.effectCollected, curEffect.id);
+				emitToClients(Enums.EngineMessage.removeEffect, curEffect.id, [curPlayer.id]);
 
 				board.effects.remove(curEffect.id);
 			}
@@ -37,7 +39,7 @@
 			var curHazard = board.hazards.get(hazardIds[i]);
 			if(MathUtils.distanceBetween(curPlayer, curHazard) <= curPlayer.getRadius()/2 + curHazard.getRadius()/2){
 				// tell the player they got the effect
- 				//sockets[curPlayerId].emit(Enums.SocketMessage.effectCollected, curHazard.id);
+ 				//sockets[curPlayerId].emit(Enums.EngineMessage.effectCollected, curHazard.id);
 
 				delete board.hazards[curHazard.id];
 			}
@@ -60,7 +62,7 @@
 			var effect = board.effects.get(id); 
 			
 			if(effect.shouldRemove()){
-				emitToClients(Enums.SocketMessage.removeEffect, id);
+				emitToClients(Enums.EngineMessage.removeEffect, id);
 				board.effects.remove(id);
 			}
 			else
@@ -116,6 +118,11 @@
 			player.draw(ctx);
 		}
 
+		var weaponsValues = board.weapons.getValues();
+		for(var i = 0; i < weaponsValues.length; i++){
+			weaponsValues[i].draw(ctx);
+		}
+
 		var effectValues = board.effects.getValues();
 		for(var i = 0; i < effectValues.length; i++){
 			effectValues[i].draw(ctx);
@@ -124,6 +131,11 @@
 
 	exports.getBounds = function(){
 		return { top: 0, left: 0, bottom: board.height, right: board.width };
+	}
+
+	exports.getPlayer = function(id){
+		if(!id == undefined) return;
+		return board.players.get(id);
 	}
 
 	// if an id is passed get data for a specific player, else get data for all players
@@ -220,6 +232,7 @@
 			}
 		}
 		// end if w,s,a,d
+		
 	}
 
 	exports.onSyncClient = function(playersConfig, clientId){
@@ -228,12 +241,31 @@
 		}
 	}
 
+	exports.onWeaponFired = function(pId, clickPos){
+		// see if player has any left
+		var owner = this.getPlayer(pId);
+		if(owner.weapons.get(owner.selectedWeapon)){
+			// add weapon to board
+			var newWeapon = WeaponFactory.createWeapon({
+				type: owner.selectedWeapon, 
+				id: pId + owner.selectedWeapon + Math.round(Math.random()*1000),
+				p: owner.p,
+				v: owner.p.calc2PointVector(owner.p, clickPos)
+			});
+			board.weapons.add(newWeapon.id, newWeapon);
+		}
+	}
+
 	exports.processBoardObjects = function(){
-		var playerKeys = board.players.getKeys();
-		for(var i = 0; i < playerKeys.length; i++){
-			var player = board.players.get(playerKeys[i]);
-			player.process();
-			player.move(exports.getBounds());
+		var players = board.players.getValues();
+		for(var i = 0; i < players.length; i++){
+			players[i].process();
+			players[i].move(exports.getBounds());
+		}
+
+		var weaponsValues = board.weapons.getValues();
+		for(var i = 0; i < weaponsValues.length; i++){
+			weaponsValues[i].move();
 		}
 
 		var effectValues = board.effects.getValues();

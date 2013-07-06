@@ -1,4 +1,5 @@
 (function(exports){
+	WeaponFactory = typeof WeaponFactory != "undefined" ? WeaponFactory : require('../common/WeaponFactory');
 	Utils = typeof Utils != "undefined" ? Utils : require('../common/utils');
 	MathUtils = typeof MathUtils != "undefined" ? MathUtils : require('../common/mathUtils');
 	Enums = typeof Enums != "undefined" ? Enums : require('../common/Enums');
@@ -30,6 +31,8 @@
 		var initialY = config.p ? config.p.y || 0 : 0;
 		this.p = new MathUtils.Vector(initialX, initialY); 
 		this.v = new MathUtils.Vector(0, 0);	
+		this.weapons = new Utils.JsDictionary();
+		this.selectedWeapon = 'bullet';
 		
 		function addEffect(effect){
 			var addTimer = function(effect){
@@ -75,6 +78,16 @@
 			}
 		}
 		
+		this.addWeapon = function(name){
+			if(!this.weapons.get(name)) this.weapons.add(name, 0);
+			this.weapons.set(name, this.weapons.get(name)+1);
+		}
+
+		this.fireWeapon = function(){
+			//var count = weapons.get(selectedWeapon);
+			//if(count > 0)
+		}
+
 		this.getPropertyValue = function(prop, aspect){
 			if(aspect == 'value' || !aspect){
 				var property = properties[prop];

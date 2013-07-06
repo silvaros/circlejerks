@@ -128,6 +128,10 @@
 			if(key != undefined) delete data[key];
 		}
 
+		this.set = function(key, val){
+			data[key] = val;
+		}
+
 		this.toJSON = function(){
 			var obj = {};
 			for(var id in data){

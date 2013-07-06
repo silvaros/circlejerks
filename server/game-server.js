@@ -24,15 +24,14 @@
 		GameEngine.processBoardObjects();
 		GameEngine.checkCollisions();
 
-		//if(loopCounter == FPS){
+		if(loopCounter == FPS){
 			loopCounter = 0;
 			var changed = Utils.copyTo(playerState, GameEngine.getPlayerData(), true);
 			if(changed){
 				//console.log("in game loop - changed = %j", changed);
-				emitToClients(Enums.SocketMessage.syncClient, changed)
+				emitToClients(Enums.EngineMessage.syncClient, changed)
 			}
-
-		//}
+		}
 
 		// randomly add new affects
 		/*var rand = Math.floor(Math.random()*100);
@@ -43,7 +42,7 @@
 			Utils.copyTo(newEffect, {p: newVec}); 
 		
 			board.effects.add(newEffect.id, newEffect);
-			emitToClients(Enums.SocketMessage.effectAdded, newEffect);
+			emitToClients(Enums.EngineMessage.effectAdded, newEffect);
 		}	
 		*/
 	}
@@ -61,20 +60,20 @@
 	function onEffectCollision(id, effectId){
 		var effect = effects[effectId];
 		if(effect){
-			sockets[id].emit(Enums.SocketMessage.effectCollected, {'lifespan': effect.getLifespan(), 'value': effect.getValue(), 'property': effect.getProperty()});
+			sockets[id].emit(Enums.EngineMessage.effectCollected, {'lifespan': effect.getLifespan(), 'value': effect.getValue(), 'property': effect.getProperty()});
 			
 			// add to player on server side		
 					
 			// if an effect is collected remove it and announce it
 			delete effects.remove(effectId);
-			emitToClients(Enums.SocketMessage.removeEffect, effectId);
+			emitToClients(Enums.EngineMessage.removeEffect, effectId);
 		}
 	}
 
 	function onPlayerDisconnect(id){
 		//console.log('in Player disconnect')
 		// if a player disconnects tell everyone so they can remove him from their board
-		emitToClients(Enums.SocketMessage.removePlayer, id);		
+		emitToClients(Enums.EngineMessage.removePlayer, id);		
 		delete GameEngine.removePlayer(id);					
 		delete sockets[id];
 	}
@@ -93,15 +92,15 @@
 		GameEngine.addPlayer(id);
 		//console.log('player in onConnection: %j', GameEngine.getPlayerData(id));
 		
-		socket.on(Enums.SocketMessage.keysPressed, function(keys){
+		socket.on(Enums.EngineMessage.keysPressed, function(keys){
 			changed = GameEngine.onKeyPressed(id, keys);
 		});
 		socket.on('disconnect', function(){ onPlayerDisconnect(id); });
 		
 		// send the board data to the new client
-		socket.emit(Enums.SocketMessage.load, {'id': id, 'board': GameEngine.getBoardData()});
+		socket.emit(Enums.EngineMessage.load, {'id': id, 'board': GameEngine.getBoardData()});
 		// inform all other clients a new player joined
-		emitToClients(Enums.SocketMessage.playerJoined, GameEngine.getPlayerData(id), [id]);
+		emitToClients(Enums.EngineMessage.playerJoined, GameEngine.getPlayerData(id), [id]);
 	}
 
 	exports.init = function(){
