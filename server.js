@@ -9,13 +9,12 @@ var express = require('express')
 app.get('/', function(req, res){
 	res.sendfile(__dirname + '/index.html');
 });
-
 app.use(express.static(__dirname));
 
 server.listen(8000);
-game.init();
+//game.init();
 
-io.sockets.on('connection', game.onConnection);
+//io.sockets.on('connection', game.onConnection);
 
 
 

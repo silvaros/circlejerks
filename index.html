@@ -8,31 +8,17 @@ body{
 }
 </style>
 
-<script type='text/javascript' src="/client/jquery.js"></script>
-<script type='text/javascript' src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/node_modules/lodash/lodash.js "></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
-<!-- Dependent files -->
-<script type='text/javascript' src="/common/Enums.js"></script>
-<script type='text/javascript' src="/common/mathUtils.js"></script>
-<script type='text/javascript' src="/common/Effect.js"></script>
-<script type='text/javascript' src="/common/WeaponFactory.js"></script>
+<script type="text/javascript" src="/node_modules/requirejs/require.js"></script>
+<script type="text/javascript" src="/client/appInit.js"></script>
 
-<script type='text/javascript' src="/common/utils.js"></script>
-<script type='text/javascript' src="/common/Player.js"></script>
-<script type='text/javascript' src="/common/GameEngine.js"></script>
 
-<script type='text/javascript' src="/client/game-client.js"></script>
 
-<script>
-$(document).ready(function(){
-	game = new Game();
-	game.init();
-});
-
-</script>
 </head>
 <body>
-	<canvas style='margin-left: auto;margin-right: auto;' id='board'>
+	<canvas style="margin-left: auto;margin-right: auto;" id="board">
 </body>
 
 

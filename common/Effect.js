@@ -55,4 +55,4 @@
 			return (timer >= visibleLifeSpan);
 		}
 	}
-})(typeof exports === 'undefined'? this['Effect'] = {} : exports);
+})(typeof exports === 'undefined'? window.CJ.Effect = {} : exports);

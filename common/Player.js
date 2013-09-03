@@ -1,10 +1,14 @@
-(function(exports){
-	WeaponFactory = typeof WeaponFactory != "undefined" ? WeaponFactory : require('../common/WeaponFactory');
-	Utils = typeof Utils != "undefined" ? Utils : require('../common/utils');
-	MathUtils = typeof MathUtils != "undefined" ? MathUtils : require('../common/mathUtils');
-	Enums = typeof Enums != "undefined" ? Enums : require('../common/Enums');
-		
-	exports.constructor = function(config){
+define([
+	'WeaponFactory',
+	'Utils', 
+	'MathUtils', 
+	'Enums'
+],
+function(WeaponFactory, Utils, MathUtils, Enums){
+
+	function Player(config){
+		if(!config) config = {};
+
 		var id = config.id || '';
 		var radius = config.radius || 14;
 		var r = config.r == undefined ? 0 : config.r;
@@ -182,6 +186,11 @@
 				'v': this.v.toJSON()
 			}
 		}
-
 	}
-})(typeof exports === 'undefined'? this['Player'] = {} : exports);
+
+	return CJ.namespace('Actors.Player', {
+		createPlayer: function(config){
+			return new Player(config);
+		}
+	});
+});
