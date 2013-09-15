@@ -1,9 +1,11 @@
 define([
 	'common/appInit',
 	'Utils',
-	'GameEngine'	
+	'GameEngine',
+	'Enums',
+	'socket.io/socket.io'
 ],
-function(ai, Utils, GameEngine) {
+function(ai, Utils, GameEngine, Enums, io) {
 	var myId = 0;
 	var keysPressed = new Utils.JsDictionary();
 	var gLoop = 0;
@@ -43,7 +45,7 @@ function(ai, Utils, GameEngine) {
 
 		init: function(players){
 			socket = io.connect('127.0.0.1:8000');
-			socket.on(CircleJerks.Enums.EngineMessage.load, function(data){
+			socket.on(Enums.EngineMessage.load, function(data){
 				myId = data.id;
 				
 				CircleJerks.GameEngine.initBoard(data.board, myId);
@@ -73,8 +75,7 @@ function(ai, Utils, GameEngine) {
 				window.onblur = function(){
 					keysPressed.clear();
 				}
-
-				
+	
 				runLoop();
 			});
 

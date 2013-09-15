@@ -12,6 +12,7 @@ body{
 <script type="text/javascript">
 	require.config({
 		baseUrl: './',
+		nodeRequire: require,
 		paths:{
 			Player: 'common/Player',
 	        GameEngine: 'common/GameEngine',
@@ -25,7 +26,7 @@ body{
 	});
 
 	require(['common/appInit', 'GameClient'], function(ai, GameClient) {
-		
+		GameClient.init();
 	});
 
 </script>
