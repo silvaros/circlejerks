@@ -4,7 +4,7 @@ var express = require('express')
   , server = http.createServer(app)
   , io = require('socket.io').listen(server)
   , fs = require('fs')
-  , game = require('./server/game-server')
+  ,	requirejs = require('requirejs')
 
 app.get('/', function(req, res){
 	res.sendfile(__dirname + '/index.html');
@@ -12,9 +12,33 @@ app.get('/', function(req, res){
 app.use(express.static(__dirname));
 
 server.listen(8000);
-//game.init();
 
-//io.sockets.on('connection', game.onConnection);
+
+requirejs.config({
+	waitSeconds: 0,
+  nodeRequire: require,
+	baseUrl: './',
+	paths: {
+        Player: 'common/Player',
+        GameEngine: 'common/GameEngine',
+        Utils: 'common/utils',
+        MathUtils: 'common/mathUtils',
+        Enums: 'common/Enums',
+        GameServer: 'server/GameServer',
+        WeaponFactory: 'common/WeaponFactory'
+	}
+});
+
+requirejs([
+	'./common/appInit',
+	'GameServer'
+],
+function(ai, game){
+	game.init();
+	io.sockets.on('connection', game.onConnection);
+});
+
+
 
 
 

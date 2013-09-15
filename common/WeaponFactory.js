@@ -1,4 +1,4 @@
-(function(exports){
+define(function(){
 	var schematics = {
 		'bullet': {
 			damage: 5,
@@ -73,9 +73,5 @@
     	}
     }
 
-    exports.createWeapon = function(config){
-    	if(!config.type) return;
-    	return new Weapon(config);
-    }
-
-})(typeof exports === 'undefined'? this['WeaponFactory'] = {} : exports);
+    return CJ.namespace('Factories.WeaponFactory', Weapon);
+});

@@ -5,7 +5,6 @@ define([
 	'Enums'
 ],
 function(WeaponFactory, Utils, MathUtils, Enums){
-
 	function Player(config){
 		if(!config) config = {};
 
@@ -188,9 +187,5 @@ function(WeaponFactory, Utils, MathUtils, Enums){
 		}
 	}
 
-	return CJ.namespace('Actors.Player', {
-		createPlayer: function(config){
-			return new Player(config);
-		}
-	});
+	return CJ.namespace('Actors.Player', Player);
 });

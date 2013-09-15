@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>CircleWars</title>
+<style>
+body{
+	padding:0px; margin:0px;
+}
+</style>
+<script type="text/javascript" src='lib\require.js'></script>
+<script type="text/javascript">
+
+	requirejs.config({
+		baseUrl:'./',
+		paths: {
+			'tm': 'common/testModule',
+			jquery: 'lib/jquery'
+		} 
+	});
+
+	requirejs(['tm', 'jquery', 'node_modules/lodash/lodash'], function(tm, $, lo) {
+		console.log('lo is %j', lo);
+		console.log('lo is %j', _);
+		console.log('$ is %j', $);
+		tm.sayHi();
+	});
+
+
+
+
+</script>
+
+</head>
+<body>
+	<canvas style="margin-left: auto;margin-right: auto;" id="board">
+</body>
+
+
+</html>

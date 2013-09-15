@@ -8,15 +8,30 @@ body{
 }
 </style>
 
-<script type="text/javascript" src="/node_modules/lodash/lodash.js "></script>
-<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-
 <script type="text/javascript" src="/node_modules/requirejs/require.js"></script>
-<script type="text/javascript" src="/client/appInit.js"></script>
+<script type="text/javascript">
+	require.config({
+		baseUrl: './',
+		paths:{
+			Player: 'common/Player',
+	        GameEngine: 'common/GameEngine',
+	        Utils: 'common/utils',
+	        MathUtils: 'common/mathUtils',
+	        Enums: 'common/Enums',
+	        GameClient: 'client/GameClient',
+	        WeaponFactory: 'common/WeaponFactory',
+	        lodash: 'node_modules/lodash/lodash'
+		}
+	});
 
+	require(['common/appInit', 'GameClient'], function(ai, GameClient) {
+		
+	});
 
+</script>
 
 </head>
+
 <body>
 	<canvas style="margin-left: auto;margin-right: auto;" id="board">
 </body>

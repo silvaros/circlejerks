@@ -1,7 +1,4 @@
-define([
-
-],
-function(){
+define(function(){
 	var ns = 'MathUtils';
 	return CJ.namespace(ns, {
 		num: function(){ return 8; },
