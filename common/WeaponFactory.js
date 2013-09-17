@@ -1,4 +1,7 @@
-define(function(){
+define([
+    'MathUtils'
+],
+function(MathUtils){
 	var schematics = {
 		'bullet': {
 			damage: 5,
@@ -48,7 +51,11 @@ define(function(){
     	if(!this.aoe) return this.damage;
     }
 
+
+3013675967
     function Weapon(config){
+        if(!config) return;//throw 'Cant create Weapon from invalid config';
+
     	var weaponSchematic = schematics[config.type];
     	var r = 255, g = 0, b = 0, a = 1;
 
@@ -64,14 +71,12 @@ define(function(){
     	this.move = getMoveFunction(weaponSchematic.mobility);
     	this.draw = getDrawFunction(config.type);
 
-    	this.process = function(){
-    		
-    	}
-
-    	this.getColor = function(){
-    		return 'rgba('+ r +', '+ g + ', ' + b + ', ' + a + ')';
-    	}
+    	this.getColor = function(){ return 'rgba('+ r +', '+ g + ', ' + b + ', ' + a + ')'; }
     }
+
+    Weapon.prototype.process = function(){}
+
+    console.log('End Weapon Constructor with %j', Weapon);  
 
     return CJ.namespace('Factories.WeaponFactory', Weapon);
 });

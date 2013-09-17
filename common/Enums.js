@@ -1,5 +1,4 @@
-define([],
-function(){
+define(function(){
 	var ns = 'Enums';
 	return CJ.namespace(ns, {
 		EngineMessage: {
@@ -40,7 +39,7 @@ function(){
 			"blackHole":		'0',
 			"spikeBall": 		'1'
 		}
-	})
+	});
 });
 
 

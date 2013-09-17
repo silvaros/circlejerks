@@ -1,12 +1,13 @@
 define([
-	'Player', 
-	'WeaponFactory',
+	'Enums',
 	'MathUtils',
-	'Utils'
+	'Utils',
+	'Player'//, 
+	//'WeaponFactory',
+	
 ],
-function(Player, WeaponFactory, MathUtils, Utils){
+function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
 	var ns = 'GameEngine';
-	var Player = new Player();	
 	var board = {
 		'height': 0, 'width': 0, 
 		'players': new Utils.JsDictionary(), 
@@ -250,14 +251,14 @@ function(Player, WeaponFactory, MathUtils, Utils){
 			var owner = this.getPlayer(pId);
 			if(owner.weapons.get(owner.selectedWeapon)){
 				// add weapon to board
-				var newWeapon = WeaponFactory.createWeapon({
+			/*	var newWeapon = WeaponFactory.createWeapon({
 					type: owner.selectedWeapon, 
 					id: pId + owner.selectedWeapon + Math.round(Math.random()*1000),
 					p: owner.p,
 					v: owner.p.calc2PointVector(owner.p, clickPos)
 				});
 				board.weapons.add(newWeapon.id, newWeapon);
-			}
+			*/}
 		},
 
 		processBoardObjects: function(){

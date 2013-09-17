@@ -48,11 +48,11 @@ function(ai, Utils, GameEngine, Enums, io) {
 			socket.on(Enums.EngineMessage.load, function(data){
 				myId = data.id;
 				
-				CircleJerks.GameEngine.initBoard(data.board, myId);
-				c.height = CircleJerks.GameEngine.getBounds().bottom;
-				c.width = CircleJerks.GameEngine.getBounds().right;
+				GameEngine.initBoard(data.board, myId);
+				c.height = GameEngine.getBounds().bottom;
+				c.width = GameEngine.getBounds().right;
 
-				var me = CircleJerks.GameEngine.getPlayer(myId);
+				var me = GameEngine.getPlayer(myId);
 				me.addWeapon("bullet");
 				me.addWeapon("bullet");
 				me.addWeapon("laser");
@@ -68,8 +68,8 @@ function(ai, Utils, GameEngine, Enums, io) {
 				});
 
 				document.getElementById('board').onclick = function(clickPos){
-					CircleJerks.GameEngine.onWeaponFired(myId, {x: clickPos.clientX, y: clickPos.clientY});
-					socket.emit(CircleJerks.Enums.PlayerAction.weaponFired, clickPos);
+					GameEngine.onWeaponFired(myId, {x: clickPos.clientX, y: clickPos.clientY});
+					socket.emit(Enums.PlayerAction.weaponFired, clickPos);
 				}
 
 				window.onblur = function(){
@@ -84,7 +84,7 @@ function(ai, Utils, GameEngine, Enums, io) {
 			// when the server verifies that this client was the first to collect the effect
 		//	socket.on(Enums.EngineMessage.effectCollected, GameEngine.onEffectCollected);
 			// when any player should no longer be drawn
-			socket.on(Enums.EngineMessage.removePlayer, CircleJerks.GameEngine.removePlayer);			
+			socket.on(Enums.EngineMessage.removePlayer, GameEngine.removePlayer);			
 			// when any effect should no longer be drawn
 		//	socket.on(Enums.EngineMessage.removeEffect, GameEngine.onRemoveEffect);			
 			// when another player joins

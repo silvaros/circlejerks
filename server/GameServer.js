@@ -1,7 +1,7 @@
 define([
-	'lodash', 'GameEngine', 'Utils'
+	'lodash', 'GameEngine', 'Utils', 'Enums'
 ],
-function(_, GameEngine, Utils){
+function(_, GameEngine, Utils, Enums){
 	var idCounter = 0;
 	var loopCounter = 0;
 	var gLoop = 0;
