@@ -1,7 +1,8 @@
 define([
-	"MathUtils"
+	'Enums',
+	'MathUtils'
 ],
-function(MathUtils){
+function(Enums, MathUtils){
 	var ns = 'Utils';
 	return CJ.namespace(ns, {
 		applyPlayerCollision: function(p1, p2){

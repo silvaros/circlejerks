@@ -2,11 +2,11 @@ define([
 	'Enums',
 	'MathUtils',
 	'Utils',
-	'Player'//, 
-	//'WeaponFactory',
-	
+	'GraphicsUtils',
+	'Player', 
+	'WeaponFactory',
 ],
-function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
+function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 	var ns = 'GameEngine';
 	var board = {
 		'height': 0, 'width': 0, 
@@ -150,9 +150,7 @@ function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
 				var player = board.players.get(id);
 				if(player) return player.toJSON();
 			}
-			else {
-				return board.players.toJSON();
-			}
+			else return board.players.toJSON();
 		},
 
 		getBoardData: function(){
@@ -186,7 +184,6 @@ function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
 					copyEffectToClient(effect);
 				}
 			}			
-			
 			
 			if(playerId !== undefined){
 				board.players.get(playerId).setColor(0,255,0);
@@ -251,14 +248,14 @@ function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
 			var owner = this.getPlayer(pId);
 			if(owner.weapons.get(owner.selectedWeapon)){
 				// add weapon to board
-			/*	var newWeapon = WeaponFactory.createWeapon({
+				var newWeapon = new Weapon({
 					type: owner.selectedWeapon, 
 					id: pId + owner.selectedWeapon + Math.round(Math.random()*1000),
 					p: owner.p,
 					v: owner.p.calc2PointVector(owner.p, clickPos)
 				});
 				board.weapons.add(newWeapon.id, newWeapon);
-			*/}
+			}
 		},
 
 		processBoardObjects: function(){
@@ -270,14 +267,14 @@ function(Enums, MathUtils, Utils, Player/*, WeaponFactory,*/ ){
 
 			var weaponsValues = board.weapons.getValues();
 			for(var i = 0; i < weaponsValues.length; i++){
-				weaponsValues[i].move();
+				weaponsValues[i].move(this.getBounds());
 			}
 
-			var effectValues = board.effects.getValues();
+		/*	var effectValues = board.effects.getValues();
 			for(var i = 0; i < effectValues.length; i++){
 				effectValues[i].process();
 			}
-		},
+		*/},
 
 		removePlayer: function(id){
 			board.players.remove(id);

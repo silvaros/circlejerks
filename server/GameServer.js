@@ -15,7 +15,7 @@ function(_, GameEngine, Utils, Enums){
 
 		//get initial state of the players
 		var playerState = GameEngine.getPlayerData();
-		
+
 		GameEngine.processBoardObjects();
 		GameEngine.checkCollisions();
 
@@ -74,7 +74,6 @@ function(_, GameEngine, Utils, Enums){
 	}
 
 	return {
-		num: 5, 
 		onConnection: function(socket) {	
 			//console.log('start on onConnection')
 			if(idCounter > 100) idCounter = 1;
@@ -97,6 +96,7 @@ function(_, GameEngine, Utils, Enums){
 		},
 
 		init: function(){
+			GameEngine.initBoard();
 			gameLoop();
 		}
 	};

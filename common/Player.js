@@ -1,10 +1,10 @@
 define([
-	//'WeaponFactory',
 	'Utils', 
 	'MathUtils', 
-	'Enums'
+	'Enums',
+	'WeaponFactory',
 ],
-function(/* WeaponFactory,*/ Utils, MathUtils, Enums){
+function(Utils, MathUtils, Enums, Weapon){
 	function Player(config){
 		if(!config) config = {};
 

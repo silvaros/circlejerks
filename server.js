@@ -13,7 +13,6 @@ app.use(express.static(__dirname));
 
 server.listen(8000);
 
-
 requirejs.config({
 	waitSeconds: 0,
   nodeRequire: require,
@@ -21,8 +20,9 @@ requirejs.config({
 	paths: {
         Player: 'common/Player',
         GameEngine: 'common/GameEngine',
-        Utils: 'common/utils',
-        MathUtils: 'common/mathUtils',
+        Utils: 'common/utils/utils',
+        MathUtils: 'common/utils/mathUtils',
+        GraphicsUtils: 'client/graphicsUtils',
         Enums: 'common/Enums',
         GameServer: 'server/GameServer',
         WeaponFactory: 'common/WeaponFactory'
@@ -30,10 +30,10 @@ requirejs.config({
 });
 
 requirejs([
-	'./common/appInit',
-	'GameServer'
+	'./common/appInit'
 ],
-function(ai, game){
+function(ai){
+  var game = requirejs('GameServer');
 	game.init();
 	io.sockets.on('connection', game.onConnection);
 });
