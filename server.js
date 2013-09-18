@@ -32,7 +32,7 @@ requirejs.config({
 requirejs([
 	'./common/appInit'
 ],
-function(ai){
+function(){
   var game = requirejs('GameServer');
 	game.init();
 	io.sockets.on('connection', game.onConnection);

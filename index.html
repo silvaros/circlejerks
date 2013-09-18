@@ -23,6 +23,9 @@ body{
 	        GameClient: 'client/GameClient',
 	        WeaponFactory: 'common/WeaponFactory',
 	        lodash: 'node_modules/lodash/lodash'
+		},
+		shim:{
+			'GameClient':["common/appInit"]
 		}
 	});
 

@@ -17,24 +17,39 @@ define(function(){
 		return { height: h, width: w }
 	}
 
-	function setScaleRatio(width, height){
-		heightScale = height == undefined ? 1 : size.height / baseHeight;
-		widthScale = width == undefined ? 1 : size.width / baseWidth;
+	function setScaleRatio(size){
+		heightScale = size.height == undefined ? 1 : size.height / baseHeight;
+		widthScale = size.width == undefined ? 1 : size.width / baseWidth;
+
+		if(keepRatio){
+			//if the height is larger than it shoud be
+			if(heightScale > widthScale){
+				size.height = baseHeight * widthScale;
+				heightScale = widthScale;
+			}
+			else if(widthScale > heightScale){
+				size.width = baseWidth * heightScale;
+				widthScale = heightScale;	
+			}
+		}
+
+		return size;
 	} 
 
 	return CJ.namespace('Utils.Graphics', {
 		onCanvasSizeChanged: function(sizeOrWidth, height){			
 			var size  = parseSizeParams(sizeOrWidth, height);
-			canvasWidth = size.width || canvasWidth || baseWidth ;
-			canvasHeight = size.height || canvasHeight || baseHeight;
+			size.width = size.width || canvasWidth || baseWidth ;
+			size.height = size.height || canvasHeight || baseHeight;
 
 			// check size bounds
-			if(canvasHeight < minHeight) canvasHeight = minHeight;
-			if(canvasWidth < minWidth) canvasWidth = minWidth;
+			if(size.height < minHeight) size.height = minHeight;
+			if(size.width < minWidth) size.width = minWidth;
 
-			if(keepRatio){}
+			size = setScaleRatio(size); 
 
-			setScaleRatio(canvasWidth, canvasHeight);
+			canvasWidth = size.width;
+			canvasHeight = size.height;
 		},
 
 		getScaledSize: function(){}
