@@ -25,11 +25,11 @@ define([
 		}
 
 		this.properties = {};
-		this.properties[Enums.PlayerProperties.accel]		= {value: 0, nominal: 0, min: -10, max:10};
-		this.properties[Enums.PlayerProperties.speed]		= {value: 0, nominal: 0, min: 0, max:15 };
-		this.properties[Enums.PlayerProperties.mass]		= {value: 6, nominal: 6, min: 1, max:25};
-		this.properties[Enums.PlayerProperties.friction]	= {value: .2, nominal: .2, min: 0, max:1};
-		this.properties[Enums.PlayerProperties.elasticity]	= {value: 1, nominal: 1, min: 1, max:1};
+		this.properties[Enums.PlayerProperties.accel]		= {value: 0, nominal: 0, min: -10, max: 10};
+		this.properties[Enums.PlayerProperties.speed]		= {value: 0, nominal: 0, min: 0, max: 15};
+		this.properties[Enums.PlayerProperties.mass]		= {value: 6, nominal: 6, min: 1, max: 25};
+		this.properties[Enums.PlayerProperties.friction]	= {value: .2, nominal: .2, min: 0, max: 1};
+		this.properties[Enums.PlayerProperties.elasticity]	= {value: 1, nominal: 1, min: 1, max: 1};
 
 		// set accel value
 		this.properties[Enums.PlayerProperties.accel].value = 
@@ -39,7 +39,10 @@ define([
 		//TODO: 							 V ??
 		var initialX = config.p ? config.p.x || 0 : 0;
 		var initialY = config.p ? config.p.y || 0 : 0;
-
+		this.p = new MathUtils.Vector(initialX, initialY); 
+		this.v = new MathUtils.Vector(0, 0);	
+		console.log('x = ' + initialX + ' y =' + initialY);
+				
 		this.draw = function(ctx){
 			ctx.save();
 			ctx.fillStyle = this.color.toString();
@@ -48,9 +51,6 @@ define([
 			ctx.fill();
 			ctx.restore();
 		}
-		
-		this.p = new MathUtils.Vector(initialX, initialY); 
-		this.v = new MathUtils.Vector(0, 0);	
 		
 		this.getId = function(){ return id; }
 		this.getNextCoords = function(){

@@ -112,9 +112,12 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 		createPlayer: function(id, playerConfig){
 			if(typeof playerConfig == 'object') return new Player(playerConfig);
 
-			var x = Math.round(Math.random()*(board.width));
-			var y = Math.round(Math.random()*(board.height));
-			return new Player({'id': id, 'p': new MathUtils.Vector(x, y)});
+			var player = new Player({'id': id });
+			var rCoords = this.getRandomCoords(player);
+			player.p.x = rCoords.x;
+			player.p.y = rCoords.y;
+
+			return player;
 		},
 
 		drawBoardObjects: function(ctx){
@@ -132,6 +135,16 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 			var effectValues = board.effects.getValues();
 			for(var i = 0; i < effectValues.length; i++){
 				effectValues[i].draw(ctx);
+			}
+		},
+
+		getBoardData: function(){
+			return {
+				'height': board.height,
+				'width': board.width,
+				'players': this.getPlayerData(),
+				'effects': board.effects.toJSON(),
+				'hazards': board.hazards.toJSON()	
 			}
 		},
 
@@ -153,20 +166,19 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 			else return board.players.toJSON();
 		},
 
-		getBoardData: function(){
+		getRandomCoords: function(actor){
 			return {
-				'height': board.height,
-				'width': board.width,
-				'players': this.getPlayerData(),
-				'effects': board.effects.toJSON(),
-				'hazards': board.hazards.toJSON()	
+				x: Math.floor(Math.random()*(board.width - (actor.radius*2)) + actor.radius),
+				y: Math.floor(Math.random()*(board.height - (actor.radius*2)) + actor.radius)
 			}
 		},
 
 		initBoard: function(boardObj, playerId){
 			if(!boardObj) boardObj = {};
 
-
+			var h = board.height = boardObj.height || 600;
+			var w = board.width = boardObj.width || 800;
+			
 			//when we init the board for a client
 			if(boardObj.players){
 				for(var pId in boardObj.players){
