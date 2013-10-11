@@ -37,12 +37,7 @@ function(ai, Utils, GameEngine, Enums, io) {
 		gLoop = setTimeout(runLoop, 1000/FPS);
 	}
 
-	return CJ.namespace("GameClient", {			
-		getContext: function(){ return ctx; },
-		getHeight: function(){ return board.height; },
-		getKeysPressed: function(){ return keysPressed; },
-		getWidth: function(){	return board.width; },
-
+	return CJ.namespace("GameClient", {
 		init: function(players){
 			socket = io.connect('127.0.0.1:8000');
 			socket.on(Enums.EngineMessage.load, function(data){

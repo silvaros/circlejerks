@@ -22,7 +22,6 @@ function(MathUtils){
 
     function getDrawFunction(type){
     	return drawBullet;
-
     }
 
     /* movement functions */

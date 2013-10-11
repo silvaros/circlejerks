@@ -25,6 +25,7 @@ store
 			directional
 		
 	shields
+		invisibility
 		weapon immune
 			doesnt protect from rations/effects		
 		deflector

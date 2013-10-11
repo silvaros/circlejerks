@@ -37,7 +37,7 @@ define(function(){
 	} 
 
 	return CJ.namespace('Utils.Graphics', {
-		onCanvasSizeChanged: function(sizeOrWidth, height){			
+		updateCanvasSize: function(sizeOrWidth, height){			
 			var size  = parseSizeParams(sizeOrWidth, height);
 			size.width = size.width || canvasWidth || baseWidth ;
 			size.height = size.height || canvasHeight || baseHeight;

@@ -3,36 +3,24 @@
 <head>
 	<title>CircleWars</title>
 <style>
-body{
+body, html{
 	padding:0px; margin:0px;
+	height: 100%;
+	width: 100%;
 }
 </style>
 <script type="text/javascript" src='lib\require.js'></script>
+<script type="text/javascript" src="test\test.js"></script>
 <script type="text/javascript">
 
-	requirejs.config({
-		baseUrl:'./',
-		paths: {
-			'tm': 'common/testModule',
-			jquery: 'lib/jquery'
-		} 
-	});
-
-	requirejs(['tm', 'jquery', 'node_modules/lodash/lodash'], function(tm, $, lo) {
-		console.log('lo is %j', lo);
-		console.log('lo is %j', _);
-		console.log('$ is %j', $);
-		tm.sayHi();
-	});
-
-
-
-
+	function load(){
+		test.testInheritance();
+	}
 </script>
 
 </head>
-<body>
-	<canvas style="margin-left: auto;margin-right: auto;" id="board">
+<body onLoad='load()'>
+	<div style="position: relative; top: 300px; left: 400px; height:40px; width:15px; border: 1px solid black; ">
 </body>
 
 

@@ -2,7 +2,7 @@ define([
 	'lodash'
 ],
 function( _ ){
-	console.log('app init args, %j', JSON.stringify(arguments));
+	//console.log('app init args, %j', JSON.stringify(arguments));
 	// root of data structure
 	CJ = _.extend({}, {
 		namespace: function(ns, config) {
@@ -37,25 +37,6 @@ function( _ ){
 			//console.log(' ');
 			
 			return obj;
-		},
-
-		require: function(moduleNames, calBkFn){
-			// Set up appropriately for the environment.
-			if (typeof exports !== 'undefined') {
-				// Node/CommonJS, 
-				calBkFn(
-					require('jquery-deferred'),
-					require("underscore"),
-					require('sinon'),
-					require('should'),
-					require('../sebastian').flow);
-			} 
-			else if (typeof define === 'function' && define.amd) {
-				// AMD
-				define(['jquery', 'lodash'], function($, _) {
-					calBkFn($, _); 
-				});
-			}
 		}
 	});
 

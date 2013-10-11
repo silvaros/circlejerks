@@ -9,7 +9,11 @@ var express = require('express')
 app.get('/', function(req, res){
 	res.sendfile(__dirname + '/index.html');
 });
+app.get('/test', function(req, res){
+  res.sendfile(__dirname + '/test.html');
+});
 app.use(express.static(__dirname));
+
 
 server.listen(8000);
 
@@ -18,7 +22,8 @@ requirejs.config({
   nodeRequire: require,
 	baseUrl: './',
 	paths: {
-        Player: 'common/Player',
+        Actor: 'common/actors/Actor',
+        Player: 'common/actors/Player',
         GameEngine: 'common/GameEngine',
         Utils: 'common/utils/utils',
         MathUtils: 'common/utils/mathUtils',
@@ -29,10 +34,7 @@ requirejs.config({
 	}
 });
 
-requirejs([
-	'./common/appInit'
-],
-function(){
+requirejs(['./common/appInit'], function(){
   var game = requirejs('GameServer');
 	game.init();
 	io.sockets.on('connection', game.onConnection);

@@ -3,37 +3,19 @@ define([
 	'MathUtils', 
 	'Enums',
 	'WeaponFactory',
+	'Actor'
 ],
-function(Utils, MathUtils, Enums, Weapon){
+function(Utils, MathUtils, Enums, Weapon, Actor){
 	function Player(config){
+		Actor.call(this, config);
+		
 		if(!config) config = {};
 
-		var id = config.id || '';
-		var radius = config.radius || 14;
-		var r = config.r == undefined ? 0 : config.r;
-		var g = config.g == undefined ? 0 : config.g;
-		var b = config.b == undefined ? 255 : config.b;
-		var a = config.a == undefined ? 1 : config.a;
-		
 		var effects = {'pos' : {}, 'neg': {}};
-		var properties = {};
-		properties[Enums.PlayerProperties.accel]= 		{value: 0, nominal: 0, min: -10, max:10};
-		properties[Enums.PlayerProperties.attack]=	 	{value: 10, nominal:10, min: 0, max:100};
-		properties[Enums.PlayerProperties.defence]=		{value: 10, nominal: 10, min: 0, max:100};
-		properties[Enums.PlayerProperties.speed]= 		{value: 0, nominal: 0, min: 0, max:15 };
-		properties[Enums.PlayerProperties.health]= 		{value: 0, nominal: 50, min: 0, max:100};
-		properties[Enums.PlayerProperties.mass]= 		{value: 6, nominal: 6, min: 1, max:25};
-		properties[Enums.PlayerProperties.friction]= 	{value: .2, nominal: .2, min: 0, max:1};
-		properties[Enums.PlayerProperties.elasticity]=	{value: 1, nominal: 1, min: 1, max:1};
-
-		// set accel value
-		properties[Enums.PlayerProperties.accel].value = 
-			Math.round( 5/ properties[Enums.PlayerProperties.mass].value*100 )/100
+		this.properties[Enums.PlayerProperties.attack]	= {value: 10, nominal:10, min: 0, max:100};
+		this.properties[Enums.PlayerProperties.defence]	= {value: 10, nominal: 10, min: 0, max:100};
+		this.properties[Enums.PlayerProperties.health]	= {value: 0, nominal: 50, min: 0, max:100};
 		
-		var initialX = config.p ? config.p.x || 0 : 0;
-		var initialY = config.p ? config.p.y || 0 : 0;
-		this.p = new MathUtils.Vector(initialX, initialY); 
-		this.v = new MathUtils.Vector(0, 0);	
 		this.weapons = new Utils.JsDictionary();
 		this.selectedWeapon = 'bullet';
 		
@@ -91,56 +73,30 @@ function(Utils, MathUtils, Enums, Weapon){
 			//if(count > 0)
 		}
 
-		this.getPropertyValue = function(prop, aspect){
-			if(aspect == 'value' || !aspect){
-				var property = properties[prop];
-				if(!property) return;
-				//only send out values withing limits on get
-				var val = property.value;
-				if(val > property.max) val = property.max;
-				else if (val < property.min) val = property.min;
-				return val;
-			}
-
-			else {
-				return properties[prop][aspect];
-			}
-		}			
-			
-		this.draw = function(ctx){
-			ctx.save();
-			ctx.fillStyle = this.getColor();
-			ctx.beginPath();
-			ctx.arc(this.p.x, this.p.y, radius, 0, 2*Math.PI, false);
-			ctx.fill();
-			ctx.restore();
-		}
-		
-		this.getColor = function(){
-			return 'rgba('+ r +', '+ g + ', ' + b + ', ' + a + ')';
-		}
-		
-		this.getPosition = function(){ return this.p; }
-		this.getRadius = function(){ return radius; }
-		this.getX = function(){	return this.p.x; }
-		this.getY = function(){	return this.p.y; }
-
 		this.move = function(bounds){
 			this.v.y = Math.round(this.v.y*100)/100;
 			this.v.x = Math.round(this.v.x*100)/100;
 						
+			var vBox = Utils.getVectorBox(this);
+
 			if(this.v.x != 0 || this.v.y != 0){
 				var newX = Math.floor(this.p.x + this.v.x);
 				var newY = Math.floor(this.p.y + this.v.y);
 			
-				var leftMost = bounds.left + radius;
-				var rightMost = bounds.right - radius;
-				var topMost = bounds.top + radius;				
-				var bottomMost = bounds.bottom - radius;
+				var leftMost = bounds.left + this.radius;
+				var rightMost = bounds.right - this.radius;
+				var topMost = bounds.top + this.radius;				
+				var bottomMost = bounds.bottom - this.radius;
 
 				// keep the this on the board
-				if(newX < leftMost) this.p.x = leftMost;
-				else if(newX > rightMost) this.p.x = rightMost;
+				if(newX < leftMost){
+					this.p.x = leftMost;
+					//TODO: what happens when we hit the wall ???
+				}
+				else if(newX > rightMost){
+					this.p.x = rightMost;
+					//TODO: what happens when we hit the wall ???
+				}
 				else this.p.x = newX;
 
 				if(newY < topMost) this.p.y = topMost;
@@ -151,7 +107,7 @@ function(Utils, MathUtils, Enums, Weapon){
 	
 		this.process = function(){
 			// simulate friction
-			var friction = properties[Enums.PlayerProperties.friction].value;
+			var friction = this.properties[Enums.PlayerProperties.friction].value;
 			if(this.v.y < 0){
 				if(this.v.y + friction > 0) this.v.y = 0;
 				else this.v.y += friction;
@@ -171,21 +127,17 @@ function(Utils, MathUtils, Enums, Weapon){
 			}	
 		}
 
-		this.setColor = function(red,green,blue,alpha){
-			r = red || r;
-			g = green || g;
-			b = blue || b;
-			a = alpha || a;
-		}
-
 		this.toJSON = function(){
 			return {
-				'id': id,
+				'id': this.getId(),
 				'p': this.p.toJSON(),
 				'v': this.v.toJSON()
 			}
 		}
 	}
+
+	Player.prototype = Object.create(Actor);
+	Player.prototype.constructor = Player;
 
 	return CJ.namespace('Actors.Player', Player);
 });

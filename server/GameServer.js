@@ -9,6 +9,16 @@ function(_, Enums, Utils, GameEngine){
 	var sockets = {};
 	var ns = 'GameServer';
 
+	// socket functions //
+	function emitToClients(channel, data, excludeClients){
+		//console.log("in emit, exclued = " + excludeClients);
+		for(var socketId in sockets)
+			if(excludeClients == undefined || excludeClients.indexOf(socketId) == -1){
+				//console.log('emitting to client ' + typeof socketId);
+				sockets[socketId].emit(channel, data);		
+			}
+	}
+		
 	function gameLoop(){
 		gLoop = setTimeout(gameLoop, 1000/FPS);
 		loopCounter++;
@@ -19,7 +29,7 @@ function(_, Enums, Utils, GameEngine){
 		GameEngine.processBoardObjects();
 		GameEngine.checkCollisions();
 
-		if(loopCounter == 3){
+		if(loopCounter == 2){
 			loopCounter = 0;
 			var changed = Utils.copyTo(playerState, GameEngine.getPlayerData(), true);
 			if(changed){
@@ -42,16 +52,6 @@ function(_, Enums, Utils, GameEngine){
 		*/
 	}
 
-	// socket functions //
-	function emitToClients(channel, data, excludeClients){
-		//console.log("in emit, exclued = " + excludeClients);
-		for(var socketId in sockets)
-			if(excludeClients == undefined || excludeClients.indexOf(socketId) == -1){
-				//console.log('emitting to client ' + typeof socketId);
-				sockets[socketId].emit(channel, data);		
-			}
-	}
-		
 	function onEffectCollision(id, effectId){
 		var effect = effects[effectId];
 		if(effect){

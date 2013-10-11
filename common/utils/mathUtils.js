@@ -14,7 +14,6 @@ define(function(){
 	    }
 
 	    this.dot = function(v) { return this.x * v.x + this.y * v.y; }
-
 		this.length = function() { return Math.sqrt(this.x * this.x + this.y * this.y); }
 
 		this.normalize = function() {

@@ -5,6 +5,15 @@ define([
 function(Enums, MathUtils){
 	var ns = 'Utils';
 	return CJ.namespace(ns, {
+		/* This returns the rectangle that the passed object 
+		   will occupy given its position and movement vector*/
+		getVectorBox: function(actor){
+			var nextCoords = actor.getNextCoords();
+			var curCoords = actor.p.toJSON();
+
+			var o=0;
+		},
+
 		applyPlayerCollision: function(p1, p2){
 			var dt, mT, v1, v2, cr, sm,
 		      dn = new MathUtils.Vector(p1.getX() - p2.getX(), p1.getY() - p2.getY()),

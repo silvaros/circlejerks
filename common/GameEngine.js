@@ -166,8 +166,6 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 		initBoard: function(boardObj, playerId){
 			if(!boardObj) boardObj = {};
 
-			board.height = boardObj.height || 600;
-			board.width = boardObj.width || 800;
 
 			//when we init the board for a client
 			if(boardObj.players){
@@ -178,15 +176,15 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 				}
 			}
 
-			if(boardObj.effects){
+			/*if(boardObj.effects){
 				for(i = 0; i < boardObj.effects.length; i++){
 					var effect = boardObj.effects[i];
 					copyEffectToClient(effect);
 				}
 			}			
-			
+			*/
 			if(playerId !== undefined){
-				board.players.get(playerId).setColor(0,255,0);
+				board.players.get(playerId).color.set({g:255});
 			}
 		},
 
