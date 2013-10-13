@@ -2,14 +2,14 @@ define([
 	'Enums',
 	'MathUtils',
 	'Utils',
-	'GraphicsUtils',
 	'Player', 
 	'WeaponFactory',
 ],
-function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
+function(Enums, MathUtils, Utils, Player, Weapon ){
+	var baseHeight = 720, baseWidth = 1280;
 	var ns = 'GameEngine';
 	var board = {
-		'height': 0, 'width': 0, 
+		'height': baseHeight, 'width': baseWidth, 
 		'players': new Utils.JsDictionary(), 
 		'effects': new Utils.JsDictionary(),
 		'hazards': new Utils.JsDictionary(),
@@ -176,8 +176,8 @@ function(Enums, MathUtils, Utils, GraphicsUtils, Player, Weapon ){
 		initBoard: function(boardObj, playerId){
 			if(!boardObj) boardObj = {};
 
-			var h = board.height = boardObj.height || 600;
-			var w = board.width = boardObj.width || 800;
+			board.height = boardObj.height || baseHeight;
+			board.width = boardObj.width || baseWidth;
 			
 			//when we init the board for a client
 			if(boardObj.players){

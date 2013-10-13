@@ -1,11 +1,12 @@
 define([
+	'jquery',
 	'common/appInit',
 	'Utils',
 	'GameEngine',
 	'Enums',
 	'socket.io/socket.io'
 ],
-function(ai, Utils, GameEngine, Enums, io) {
+function($, ai, Utils, GameEngine, Enums, io) {
 	var myId = 0;
 	var keysPressed = new Utils.JsDictionary();
 	var gLoop = 0;
@@ -14,6 +15,11 @@ function(ai, Utils, GameEngine, Enums, io) {
 	
 	var c = document.getElementById('board');
 	var ctx = c.getContext('2d');
+
+	$(window).on('resize', function(){
+		c.style.width = window.innerWidth-100 + 'px';
+		c.style.height = window.innerHeight -5 + 'px';
+	});
 
 	function clear(){
 		ctx.fillStyle = '#000';
@@ -46,6 +52,9 @@ function(ai, Utils, GameEngine, Enums, io) {
 				GameEngine.initBoard(data.board, myId);
 				c.height = GameEngine.getBounds().bottom;
 				c.width = GameEngine.getBounds().right;
+
+				c.style.width = window.innerWidth-100 + 'px';
+				c.style.height = window.innerHeight -5 + 'px';
 
 				var me = GameEngine.getPlayer(myId);
 				me.addWeapon("bullet");

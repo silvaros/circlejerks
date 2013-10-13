@@ -14,6 +14,9 @@ body{
 		baseUrl: './',
 		nodeRequire: require,
 		paths:{
+			jquery: 'lib/jquery',
+			lodash: 'node_modules/lodash/lodash',
+			
 			Actor: 'common/actors/Actor',
 			Player: 'common/actors/Player',
 	        GameEngine: 'common/GameEngine',
@@ -23,7 +26,7 @@ body{
 	        Enums: 'common/Enums',
 	        GameClient: 'client/GameClient',
 	        WeaponFactory: 'common/WeaponFactory',
-	        lodash: 'node_modules/lodash/lodash'
+	        
 		},
 		shim:{
 			'GameClient':["common/appInit"]
