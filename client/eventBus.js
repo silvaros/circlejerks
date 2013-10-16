@@ -1,7 +1,6 @@
-CircleJerks.EventBus = (function(){
-	var msgQueue = {}
-
-	return {
+define(function(){
+	var msgQueue = {};
+	return CJ.namespace('EventBus', {
 		on: function(eventName, fn){
 			if(!eventName || !fn) throw "Invalid Parameter passed to ebUtils.on";
 
@@ -13,10 +12,10 @@ CircleJerks.EventBus = (function(){
 
 		},
 
-		trigger: function(eventName, data){
+		fire: function(eventName, data){
 			_.each(msgQueue[eventName], function(callback){
 				callback();
 			})
 		}
-	}
-})();
+	});
+});

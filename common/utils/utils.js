@@ -4,6 +4,9 @@ define([
 ],
 function(Enums, MathUtils){
 	var ns = 'Utils';
+	var hRatio = 9;
+	var wRatio = 16;
+
 	return CJ.namespace(ns, {
 		/* This returns the rectangle that the passed object 
 		   will occupy given its position and movement vector*/

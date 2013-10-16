@@ -3,12 +3,24 @@
 <head>
 	<title>CircleWars</title>
 <style>
-body{
-	padding:0px; margin:0px;
+body, html { 
+	padding:0px;
+	margin:0px;
+	overflow: hidden;
 }
+
+canvas {
+	display: block;
+}
+
+#playerInventory {
+	border: 1px solid red;
+}
+
+
 </style>
 
-<script type="text/javascript" src="/node_modules/requirejs/require.js"></script>
+<script type="text/javascript" src="lib/require.js"></script>
 <script type="text/javascript">
 	require.config({
 		baseUrl: './',
@@ -43,7 +55,7 @@ body{
 </head>
 
 <body>
-	<canvas style="margin-left: auto;margin-right: auto;" id="board">
+	<canvas id="board" />
 </body>
 
 

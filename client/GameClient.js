@@ -1,5 +1,6 @@
 define([
 	'jquery',
+
 	'common/appInit',
 	'Utils',
 	'GameEngine',
@@ -16,15 +17,48 @@ function($, ai, Utils, GameEngine, Enums, io) {
 	var c = document.getElementById('board');
 	var ctx = c.getContext('2d');
 
+	var wRatio = 16;
+	var hRatio = 9;
+
 	$(window).on('resize', function(){
-		c.style.width = window.innerWidth-100 + 'px';
-		c.style.height = window.innerHeight -5 + 'px';
+		//keep canvas in sync
+		var scaledSize = getScaledSize(window.innerHeight, window.innerWidth);
+		c.style.width =  scaledSize.w + 'px';
+		c.style.height = scaledSize.h + 'px';
 	});
 
 	function clear(){
 		ctx.fillStyle = '#000';
 		ctx.clearRect(0, 0, board.width, board.height);
 		ctx.fillRect(0, 0, board.width, board.height);
+	}
+
+	function getScaledClick(clickEvt){
+		var cClientW = c.style.width != "" ? c.style.width.substr(0, c.style.width.length - 2) : c.width;
+		var cClientH = c.style.height != "" ? c.style.height.substr(0, c.style.height.length - 2) : c.height;
+
+		var xRatio = c.width / cClientW;	
+		var yRatio = c.height / cClientH;
+
+		return {x: clickEvt.clientX *xRatio, y: clickEvt.clientY *yRatio }
+	}
+
+	function getScaledSize(h, w){
+		var scaledH = h * wRatio;
+		var scaledW = w * hRatio;
+
+		// perfect aspect ratio
+		if(scaledW == scaledH) return {'h':h, 'w':w};
+		//if the new width would be too much
+		if(scaledW > scaledH){
+			var dif = (scaledW - scaledH)/hRatio;
+			return {'h':h, 'w':w - dif};
+		}
+		//if the new width would be too much
+		if(scaledW < scaledH){
+			var dif = (scaledH - scaledW)/wRatio;
+			return {'h':h - dif, 'w':w};
+		}	
 	}
 
 	function runLoop(){
@@ -53,8 +87,10 @@ function($, ai, Utils, GameEngine, Enums, io) {
 				c.height = GameEngine.getBounds().bottom;
 				c.width = GameEngine.getBounds().right;
 
-				c.style.width = window.innerWidth-100 + 'px';
-				c.style.height = window.innerHeight -5 + 'px';
+				//TODO: get widths from side divs
+				var minusWidth = 200;
+				//c.style.width = window.innerWidth - minusWidth + 'px';
+				//c.style.height = window.innerHeight + 'px';
 
 				var me = GameEngine.getPlayer(myId);
 				me.addWeapon("bullet");
@@ -64,15 +100,11 @@ function($, ai, Utils, GameEngine, Enums, io) {
 				me.addWeapon("spike");
 							
 				// Listeners
-				document.addEventListener('keydown', function(e){
-					keysPressed.add(e.keyCode, true);
-				});					
-				document.addEventListener('keyup', function(e){
-					keysPressed.remove(e.keyCode);
-				});
+				document.addEventListener('keydown', function(e){keysPressed.add(e.keyCode, true);});
+				document.addEventListener('keyup', function(e){keysPressed.remove(e.keyCode);});
 
 				document.getElementById('board').onclick = function(clickPos){
-					GameEngine.onWeaponFired(myId, {x: clickPos.clientX, y: clickPos.clientY});
+					GameEngine.onWeaponFired(myId, getScaledClick(clickPos));
 					socket.emit(Enums.PlayerAction.weaponFired, clickPos);
 				}
 

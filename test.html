@@ -10,16 +10,40 @@ body, html{
 }
 </style>
 <script type="text/javascript" src='lib\require.js'></script>
-<script type="text/javascript" src="test\test.js"></script>
 <script type="text/javascript">
+	require.config({
+		baseUrl: './',
+		nodeRequire: require,
+		paths:{
+			jquery: 'lib/jquery',
+			lodash: 'node_modules/lodash/lodash',
+			
+			Actor: 'common/actors/Actor',
+			Player: 'common/actors/Player',
+	        GameEngine: 'common/GameEngine',
+	        Utils: 'common/utils/utils',
+	        MathUtils: 'common/utils/mathUtils',
+	        GraphicsUtils: 'client/graphicsUtils',
+	        Enums: 'common/Enums',
+	        GameClient: 'client/GameClient',
+	        WeaponFactory: 'common/WeaponFactory',
+	        
+	        test: "test/test"
+		},
+		shim:{
+			// load app init first
+			'test':["common/appInit"]
+		}
+	});
 
-	function load(){
-		test.testInheritance();
-	}
+	require(['test'], function(test){
+		test.runAllBut();
+	});
+
 </script>
 
 </head>
-<body onLoad='load()'>
+<body>
 	<div style="position: relative; top: 300px; left: 400px; height:40px; width:15px; border: 1px solid black; ">
 </body>
 
