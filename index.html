@@ -29,11 +29,12 @@ body{
 	        
 		},
 		shim:{
+			// load app init first
 			'GameClient':["common/appInit"]
 		}
 	});
 
-	require(['common/appInit', 'GameClient'], function(ai, GameClient) {
+	require(['GameClient'], function(GameClient) {
 		GameClient.init();
 	});
 
