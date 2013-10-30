@@ -13,10 +13,14 @@ canvas {
 	display: block;
 }
 
-#playerInventory {
-	border: 1px solid red;
-}
 
+#divPlayerInventory {
+    border: 1px solid #FF0000;
+    display: inline-block;
+    height: 100%;
+    position: fixed;
+    width: 10%;
+}
 
 </style>
 
@@ -55,7 +59,8 @@ canvas {
 </head>
 
 <body>
-	<canvas id="board" />
+	<canvas id="board"></canvas>
+	<div id="divPlayerInventory"></div>
 </body>
 
 

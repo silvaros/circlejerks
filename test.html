@@ -28,7 +28,8 @@ body, html{
 	        GameClient: 'client/GameClient',
 	        WeaponFactory: 'common/WeaponFactory',
 	        
-	        test: "test/test"
+	        test: "test/test",
+	        b2d: 'lib/box2d'
 		},
 		shim:{
 			// load app init first
@@ -37,14 +38,14 @@ body, html{
 	});
 
 	require(['test'], function(test){
-		test.runAllBut();
+		test.init();
 	});
 
 </script>
 
 </head>
 <body>
-	<div style="position: relative; top: 300px; left: 400px; height:40px; width:15px; border: 1px solid black; ">
+	<canvas height=720 width=1028 id="c"></canvas>
 </body>
 
 

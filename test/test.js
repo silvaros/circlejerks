@@ -1,3 +1,55 @@
+
+define(['b2d'], function(){
+	function update(){
+		world.Step(1 / 60, 10, 10);
+		world.DrawDebugData();
+		world.ClearForces(); 
+	}
+
+	var	b2Vec2		= Box2D.Common.Math.b2Vec2,
+    	b2BodyDef	= Box2D.Dynamics.b2BodyDef,
+        b2Body		= Box2D.Dynamics.b2Body,
+        b2FixtureDef	= Box2D.Dynamics.b2FixtureDef,
+        b2World		= Box2D.Dynamics.b2World,
+		b2PolygonShape	= Box2D.Collision.Shapes.b2PolygonShape,
+        b2CircleShape	= Box2D.Collision.Shapes.b2CircleShape,
+        b2DebugDraw = Box2D.Dynamics.b2DebugDraw,
+        world
+
+
+	return {
+		init: function(){
+			world = new b2World(new b2Vec2(0,0), true);
+			
+			var fixDef = new b2FixtureDef();
+			fixDef.density = 1.0;
+			fixDef.friction = .5;
+			fixDef.restiution = .2;
+			fixDef.shape = new b2CircleShape(14);
+
+			var bodyDef = new b2BodyDef();
+			bodyDef.type = b2Body.b2_dyanmicBody;
+
+			bodyDef.position.x = 100;
+			bodyDef.position.y = 100;
+
+			world.CreateBody(bodyDef).CreateFixture(fixDef)
+
+			//setup debug draw
+			var debugDraw = new b2DebugDraw();
+			debugDraw.SetSprite(document.getElementById("c").getContext("2d"));
+			//debugDraw.SetDrawScale(30.0);
+			debugDraw.SetFillAlpha(0.5);
+			debugDraw.SetLineThickness(1.0);
+			debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+			world.SetDebugDraw(debugDraw);
+
+			window.setInterval(update, 1000 / 60); 
+		}
+	}
+
+})
+
 define("defaultTests", [],
 function(){
 	return {
@@ -10,8 +62,7 @@ function(){
 				}
 			}
 
-			function b(){
-				
+			function b(){		
 				this.b = 111;
 				this.getX = function(){return this.b}
 
@@ -26,17 +77,13 @@ function(){
 			bb.aa();
 			console.log(bb.getX)
 			console.log(bb.getX())
-
-
-
 		}
 	}
-
 });
 
 
 /* Event bus tests*/
-define(["client/eventBus"],
+define('',["client/eventBus"],
 function(eb){
 	var tests = {
 		testOnFnUsingNumSubscriptions: function(){
