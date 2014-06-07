@@ -31,7 +31,7 @@ function($, ai, Utils, GameEngine, Enums, io) {
 	}
 
 	$(window).on('resize', scaleCanvasToWindowSize);
-	
+
 	function clear(){
 		ctx.fillStyle = '#000';
 		ctx.clearRect(0, 0, board.width, board.height);
@@ -93,11 +93,6 @@ function($, ai, Utils, GameEngine, Enums, io) {
 				GameEngine.initBoard(data.board, myId);
 				c.height = GameEngine.getBounds().bottom;
 				c.width = GameEngine.getBounds().right;
-
-				//TODO: get widths from side divs
-				var minusWidth = 200;
-				//c.style.width = window.innerWidth - minusWidth + 'px';
-				//c.style.height = window.innerHeight + 'px';
 
 				var me = GameEngine.getPlayer(myId);
 				me.addWeapon("bullet");

@@ -2,42 +2,42 @@ define(function(){
 	var ns = 'Enums';
 	return CJ.namespace(ns, {
 		EngineMessage: {
-			"collision":		'0', 
-			"effectAdded": 		'1',
-			"effectCollected": 	'2',
-			"keysPressed": 		'3',
-			"load": 			'4', 
-			"playerJoined":		'5',
-			"removeEffect": 	'6',
-			"removePlayer": 	'7',
-			"syncClient": 		'8'
+			"collision":		'EM0', 
+			"effectAdded": 		'EM1',
+			"effectCollected": 	'EM2',
+			"keysPressed": 		'EM3',
+			"load": 			'EM4', 
+			"playerJoined":		'EM5',
+			"removeEffect": 	'EM6',
+			"removePlayer": 	'EM7',
+			"syncClient": 		'EM8'
 		},
 
 		EffectConfig: {
-			"effectLifespan": 	'0',
-			"property": 		'1',
-			"value": 			'2',
-			"visibleLifespan": 	'3'
+			"effectLifespan": 	'EC0',
+			"property": 		'EC1',
+			"value": 			'EC2',
+			"visibleLifespan": 	'EC3'
 		},
 		
 		PlayerAction: {
-			'weaponFired' :  	'0'
+			'boardClicked' :  	'PA0'
 		},
 
 		PlayerProperties: {
-			'accel': 			'0',
-			'attack': 			'1',
-			'defence': 			'3',
-			'elasticity': 		'4',
-			'friction': 		'5',
-			'health': 			'6',
-			'mass': 			'7',
-			'speed': 			'8'
+			'accel': 			'PP0',
+			'attack': 			'PP1',
+			'defence': 			'PP3',
+			'elasticity': 		'PP4',
+			'friction': 		'PP5',
+			'health': 			'PP6',
+			'mass': 			'PP7',
+			'speed': 			'PP8'
 		},
 		
 		Hazard: {
-			"blackHole":		'0',
-			"spikeBall": 		'1'
+			"blackHole":		'H0',
+			"spikeBall": 		'H1'
 		}
 	});
 });
