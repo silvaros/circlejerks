@@ -20,13 +20,18 @@ function($, ai, Utils, GameEngine, Enums, io) {
 	var wRatio = 16;
 	var hRatio = 9;
 
-	$(window).on('resize', function(){
+	function scaleCanvasToWindowSize(){
 		//keep canvas in sync
-		var scaledSize = getScaledSize(window.innerHeight, window.innerWidth);
+		var w = window.innerWidth - $("#divPlayerInventory").width() - 2;
+		var h = window.innerHeight;
+
+		var scaledSize = getScaledSize(h, w);
 		c.style.width =  scaledSize.w + 'px';
 		c.style.height = scaledSize.h + 'px';
-	});
+	}
 
+	$(window).on('resize', scaleCanvasToWindowSize);
+	
 	function clear(){
 		ctx.fillStyle = '#000';
 		ctx.clearRect(0, 0, board.width, board.height);
@@ -79,6 +84,8 @@ function($, ai, Utils, GameEngine, Enums, io) {
 
 	return CJ.namespace("GameClient", {
 		init: function(players){
+			scaleCanvasToWindowSize();
+
 			socket = io.connect('127.0.0.1:8000');
 			socket.on(Enums.EngineMessage.load, function(data){
 				myId = data.id;

@@ -1,9 +1,8 @@
 var express = require('express') 
   ,	app = express()
-  , http = require('http')
-  , server = http.createServer(app)
+  , server = require('http').createServer(app)
+  
   , io = require('socket.io').listen(server)
-  , fs = require('fs')
   ,	requirejs = require('requirejs')
 
 app.get('/', function(req, res){
@@ -16,6 +15,7 @@ app.use(express.static(__dirname));
 
 
 server.listen(8000);
+console.log("Listening on WNOD, port 8000");
 
 requirejs.config({
 	waitSeconds: 0,

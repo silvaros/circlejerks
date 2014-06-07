@@ -29,7 +29,7 @@ function(_, Enums, Utils, GameEngine){
 		GameEngine.processBoardObjects();
 		GameEngine.checkCollisions();
 
-		if(loopCounter == 2){
+		if(loopCounter == 1){
 			loopCounter = 0;
 			var changed = Utils.copyTo(playerState, GameEngine.getPlayerData(), true);
 			if(changed){

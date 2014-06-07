@@ -5,9 +5,9 @@
   "author": "Nodejitsu <support@nodejitsu.com>",
   "description": "a simple zero-configuration command-line http server",
   "dependencies": {
-    "lodash": "~1.3.1",
-    "requirejs": "~2.1.8",
-    "express": "~3.3.8",
-    "socket.io": "~0.9.16"
+    "lodash": ">=2.4.1",
+    "requirejs": ">=2.1.14",
+    "express": ">=4.4.1",
+    "socket.io": ">=0.9.17"
   }
 }
